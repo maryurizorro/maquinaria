@@ -14,6 +14,7 @@ class DetalleSolicitud extends Model
         'mantenimiento_id',
         'cantidad_maquinas',
         'costo_total',
+        'Url_foto',
     ];
 
     protected $casts = [

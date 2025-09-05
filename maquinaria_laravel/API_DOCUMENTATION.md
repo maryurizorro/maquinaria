@@ -1,4 +1,4 @@
-# Documentación API - Sistema de Maquinaria
+![alt text](image.png)# Documentación API - Sistema de Maquinaria
 
 ## Información General
 - **Base URL**: `http://localhost:8000/api`
@@ -286,3 +286,4 @@ El seeder incluye los siguientes datos de prueba:
    - Empresas → Representantes → Categorías → Tipos → Mantenimientos → Solicitudes → Detalles → Empleados → Asignaciones
 5. **Probar consultas especiales**
 6. **Probar dashboard y estadísticas**
+

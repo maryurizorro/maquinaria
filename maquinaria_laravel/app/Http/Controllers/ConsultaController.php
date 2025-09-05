@@ -19,9 +19,8 @@ class ConsultaController extends Controller
     // 1. Listar empleados ordenados por apellido
     public function empleadosOrdenados()
     {
-        $empleados = User::where('rol', 'empleado')
-            ->select('name as nombre', 'email', 'rol')
-            ->orderBy('name')
+        $empleados = Empleado::select('nombre', 'apellido', 'documento', 'email', 'telefono')
+            ->orderBy('apellido')
             ->get();
 
         return response()->json([
@@ -56,8 +55,16 @@ class ConsultaController extends Controller
     public function empresaMasSolicitudes()
     {
         $empresa = Empresa::join('solicituds', 'empresas.id', '=', 'solicituds.empresa_id')
-            ->select('empresas.*', DB::raw('COUNT(solicituds.id) as total_solicitudes'))
-            ->groupBy('empresas.id')
+            ->select(
+                'empresas.id',
+                'empresas.nombre',
+                'empresas.nit',
+                'empresas.direccion',
+                'empresas.telefono',
+                'empresas.email',
+                DB::raw('COUNT(solicituds.id) as total_solicitudes')
+            )
+            ->groupBy('empresas.id', 'empresas.nombre', 'empresas.nit', 'empresas.direccion', 'empresas.telefono', 'empresas.email')
             ->orderBy('total_solicitudes', 'desc')
             ->first();
 
@@ -84,19 +91,14 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 5. Solicitudes del empleado con documento 1057896547
+    // 5. Datos de las solicitudes que debe atender el Empleado con número de documento 1057896547.
     public function solicitudesEmpleado()
     {
-        $solicitudes = Solicitud::join('solicitud_empleados', 'solicituds.id', '=', 'solicitud_empleados.solicitud_id')
-            ->join('empleados', 'solicitud_empleados.empleado_id', '=', 'empleados.id')
-            ->where('empleados.documento', '1057896547')
-            ->select('solicituds.*', 'empleados.nombre as empleado_nombre', 'empleados.apellido as empleado_apellido')
-            ->get();
+        $solicitudes = Solicitud::whereHas('empleados', function ($query) {
+            $query->where('documento', '1057896547');
+        })->with('empleados')->get();
 
-        return response()->json([
-            'status' => true,
-            'data' => $solicitudes
-        ]);
+        return response()->json($solicitudes);
     }
 
     // 6. Representantes y empresas sin solicitudes
@@ -142,9 +144,14 @@ class ConsultaController extends Controller
         ]);
 
         $solicitud = Solicitud::where('codigo', $request->codigo)
-            ->with(['empleados' => function($query) {
-                $query->select('empleados.*', 'solicitud_empleados.estado as estado_asignacion');
-            }])
+            ->with([
+                'empresa:id,nombre,nit',
+                'detallesSolicitud.mantenimiento.tipoMaquinaria:id,nombre',
+                'empleados' => function ($query) {
+                    $query->select('empleados.id', 'empleados.nombre', 'empleados.apellido', 'empleados.documento')
+                        ->withPivot('estado');
+                }
+            ])
             ->first();
 
         if (!$solicitud) {

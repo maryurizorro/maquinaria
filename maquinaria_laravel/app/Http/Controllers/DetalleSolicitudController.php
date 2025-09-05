@@ -25,15 +25,17 @@ class DetalleSolicitudController extends Controller
             'solicitud_id' => 'required|exists:solicituds,id',
             'mantenimiento_id' => 'required|exists:mantenimientos,id',
             'cantidad_maquinas' => 'required|integer|min:1',
+            'Url_foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'message' => 'Error de validación',
                 'errors' => $validator->errors()
-            ], 422);
+            ], 400);
         }
+
+        $subirImagenController = new SubirImagenController();
+        $url_imagen = $subirImagenController->subirImagen($request);
 
         // Calcular el costo total
         $mantenimiento = Mantenimiento::find($request->mantenimiento_id);
@@ -44,6 +46,7 @@ class DetalleSolicitudController extends Controller
             'mantenimiento_id' => $request->mantenimiento_id,
             'cantidad_maquinas' => $request->cantidad_maquinas,
             'costo_total' => $costo_total,
+            'Url_foto' => $url_imagen,
         ]);
 
         return response()->json([
@@ -115,22 +118,22 @@ class DetalleSolicitudController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        $detalle = DetalleSolicitud::find($id);
+        $solicitudDetalle = DetalleSolicitud::find($id);
 
-        if (!$detalle) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Detalle de solicitud no encontrado'
-            ], 404);
+        if (!$solicitudDetalle) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $detalle->delete();
+        // Eliminar imagen asociada
+        $subirImagenController = new SubirImagenController();
+        $subirImagenController->EliminarImagen($solicitudDetalle->url_imagen);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Detalle de solicitud eliminado exitosamente'
-        ]);
+        // Eliminar registro
+        $solicitudDetalle->delete();
+
+        return response()->json(['message' => 'Registro eliminado correctamente']);
     }
+
 }

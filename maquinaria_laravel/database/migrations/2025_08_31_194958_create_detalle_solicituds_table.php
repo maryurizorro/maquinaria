@@ -17,7 +17,9 @@ return new class extends Migration
             $table->foreignId('mantenimiento_id')->constrained()->onDelete('cascade');
             $table->integer('cantidad_maquinas');
             $table->decimal('costo_total', 10, 2);
+            $table->text('Url_foto');
             $table->timestamps();
+
         });
     }
 
