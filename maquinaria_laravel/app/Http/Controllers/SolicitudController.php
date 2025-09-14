@@ -25,6 +25,8 @@ class SolicitudController extends Controller
             'fecha_solicitud' => 'required|date',
             'estado' => 'sometimes|in:pendiente,en_proceso,completada,cancelada',
             'observaciones' => 'nullable|string',
+            'fecha_deseada' => 'nullable|date',
+            'descripcion_solicitud' => 'nullable|string|max:500',
             'empresa_id' => 'required|exists:empresas,id',
         ]);
 
@@ -78,6 +80,8 @@ class SolicitudController extends Controller
             'fecha_solicitud' => 'sometimes|required|date',
             'estado' => 'sometimes|in:pendiente,en_proceso,completada,cancelada',
             'observaciones' => 'nullable|string',
+            'descripcion_solicitud' => 'nullable|string',
+            'fecha_deseada' => 'nullable|date',
             'empresa_id' => 'sometimes|required|exists:empresas,id',
         ]);
 

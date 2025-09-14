@@ -287,3 +287,7 @@ El seeder incluye los siguientes datos de prueba:
 5. **Probar consultas especiales**
 6. **Probar dashboard y estadísticas**
 
+
+
+
+

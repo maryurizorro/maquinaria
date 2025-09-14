@@ -14,11 +14,14 @@ class Solicitud extends Model
         'fecha_solicitud',
         'estado',
         'observaciones',
+        'descripcion_solicitud',
+        'fecha_deseada',
         'empresa_id',
     ];
 
     protected $casts = [
         'fecha_solicitud' => 'date',
+        'fecha_deseada' => 'date',
     ];
 
     public function empresa()

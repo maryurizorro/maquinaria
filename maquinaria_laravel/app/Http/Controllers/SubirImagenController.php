@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DetalleSolicitud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SubirImagenController extends Controller
 {
@@ -23,15 +24,15 @@ class SubirImagenController extends Controller
         return Storage::url($path);
     }
 
-    public function EliminarImagen(?string $urlImagen)
-    {
-        if ($urlImagen) {
-            
-            $path = str_replace('/storage/', '', $urlImagen);
+public function EliminarImagen(?string $urlImagen)
+{
+    if ($urlImagen) {
+        // Extraer la ruta del archivo después de '/storage/'
+        $path = Str::after($urlImagen, '/storage/');
 
-            if (Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
-            }
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
         }
     }
+}
 }

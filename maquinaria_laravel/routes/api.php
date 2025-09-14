@@ -25,9 +25,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::post('crear_detalle_solicitudes', [DetalleSolicitudController::class, 'store']);
-Route::delete('eliminar_detalle_solicitudes/{id}', [DetalleSolicitudController::class, 'destroy']);
-
 // Ruta para obtener información del usuario autenticado
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -65,11 +62,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('categorias/{id}', [CategoriaMaquinariaController::class, 'destroy']);
 
     // TIPOS DE MAQUINARIA
-    Route::get('tipos-maquinaria', [TipoMaquinariaController::class, 'index']);
-    Route::post('tipos-maquinaria', [TipoMaquinariaController::class, 'store']);
-    Route::get('tipos-maquinaria/{id}', [TipoMaquinariaController::class, 'show']);
-    Route::put('tipos-maquinaria/{id}', [TipoMaquinariaController::class, 'update']);
-    Route::delete('tipos-maquinaria/{id}', [TipoMaquinariaController::class, 'destroy']);
+    Route::get('tipos_maquinaria', [TipoMaquinariaController::class, 'index']);
+    Route::post('tipos_maquinaria', [TipoMaquinariaController::class, 'store']);
+    Route::get('tipos_maquinaria/{id}', [TipoMaquinariaController::class, 'show']);
+    Route::put('tipos_maquinaria/{id}', [TipoMaquinariaController::class, 'update']);
+    Route::delete('tipos_maquinaria/{id}', [TipoMaquinariaController::class, 'destroy']);
 
     // MANTENIMIENTOS 
     Route::get('mantenimientos', [MantenimientoController::class, 'index']);
@@ -86,10 +83,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('solicitudes/{id}', [SolicitudController::class, 'destroy']);
 
     // DETALLE DE SOLICITUDES
-    Route::get('listar_detalle_solicitudes', [DetalleSolicitudController::class, 'index']);
-
-    Route::get('detalle-solicitudes/{id}', [DetalleSolicitudController::class, 'show']);
-    Route::put('actualizar_detalle_solicitudes/{id}', [DetalleSolicitudController::class, 'update']);
+    Route::get('detalle_solicitudes', [DetalleSolicitudController::class, 'index']);
+    Route::post('detalle_solicitudes', [DetalleSolicitudController::class, 'store']);
+    Route::get('detalle_solicitudes/{id}', [DetalleSolicitudController::class, 'show']);
+    Route::put('detalle_solicitudes/{id}', [DetalleSolicitudController::class, 'update']);
+    Route::delete('detalle_solicitudes/{id}', [DetalleSolicitudController::class, 'destroy']);
 
     // EMPLEADOS
     Route::get('empleados', [EmpleadoController::class, 'index']);
@@ -99,26 +97,59 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('empleados/{id}', [EmpleadoController::class, 'destroy']);
 
     // ASIGNACIÓN DE EMPLEADOS A SOLICITUD
-    Route::get('solicitud-empleados', [SolicitudEmpleadoController::class, 'index']);
-    Route::post('solicitud-empleados', [SolicitudEmpleadoController::class, 'store']);
-    Route::get('solicitud-empleados/{id}', [SolicitudEmpleadoController::class, 'show']);
-    Route::put('solicitud-empleados/{id}', [SolicitudEmpleadoController::class, 'update']);
-    Route::delete('solicitud-empleados/{id}', [SolicitudEmpleadoController::class, 'destroy']);
+    Route::get('solicitud_empleados', [SolicitudEmpleadoController::class, 'index']);
+    Route::post('solicitud_empleados', [SolicitudEmpleadoController::class, 'store']);
+    Route::get('solicitud_empleados/{id}', [SolicitudEmpleadoController::class, 'show']);
+    Route::put('solicitud_empleados/{id}', [SolicitudEmpleadoController::class, 'update']);
+    Route::delete('solicitud_empleados/{id}', [SolicitudEmpleadoController::class, 'destroy']);
 
     // CONSULTAS EXTRAS
     Route::prefix('consultas')->group(function () {
         Route::get('empleado_ordenados', [ConsultaController::class, 'empleadosOrdenados']);
-        Route::get('maquinaria_pesada-costosa', [ConsultaController::class, 'maquinariaPesadaCostosa']);
-        Route::get('empresa-mas_solicitudes', [ConsultaController::class, 'empresaMasSolicitudes']);
+        Route::get('maquinaria_pesada_costosa', [ConsultaController::class, 'maquinariaPesadaCostosa']);
+        Route::get('empresa_mas_solicitudes', [ConsultaController::class, 'empresaMasSolicitudes']);
         Route::get('maquinas_argos', [ConsultaController::class, 'maquinasArgos']);
         Route::get('solicitudes_empleado', [ConsultaController::class, 'solicitudesEmpleado']);
-        Route::get('representantes-sin-solicitudes', [ConsultaController::class, 'representantesEmpresasSinSolicitudes']);
-        Route::get('listado-solicitudes', [ConsultaController::class, 'listadoSolicitudes']);
-        Route::post('solicitud-por-codigo', [ConsultaController::class, 'solicitudPorCodigo']);
-        Route::get('mantenimientos-retroexcavadoras', [ConsultaController::class, 'mantenimientosRetroexcavadoras']);
-        Route::get('solicitudes-octubre-2023', [ConsultaController::class, 'solicitudesOctubre2023']);
+        Route::get('representantes_sin_solicitudes', [ConsultaController::class, 'representantesEmpresasSinSolicitudes']);
+        Route::get('listado_solicitudes', [ConsultaController::class, 'listadoSolicitudes']);
+        Route::post('solicitud_por_codigo', [ConsultaController::class, 'solicitudPorCodigo']);
+        Route::get('mantenimientos_retroexcavadoras', [ConsultaController::class, 'mantenimientosRetroexcavadoras']);
+        Route::get('solicitudes_octubre_2023', [ConsultaController::class, 'solicitudesOctubre2023']);
     });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     // Rutas adicionales útiles
     Route::prefix('dashboard')->group(function () {
         // Estadísticas generales

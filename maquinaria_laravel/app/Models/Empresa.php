@@ -13,6 +13,7 @@ class Empresa extends Model
         'nombre',
         'nit',
         'direccion',
+        'ciudad',
         'telefono',
         'email',
     ];

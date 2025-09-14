@@ -23,3 +23,4 @@ class Representante extends Model
         return $this->belongsTo(Empresa::class);
     }
 }
+ 

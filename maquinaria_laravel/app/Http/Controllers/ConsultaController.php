@@ -16,7 +16,7 @@ use App\Models\CategoriaMaquinaria;
 
 class ConsultaController extends Controller
 {
-    // 1. Listar empleados ordenados por apellido
+    //  Listar empleados ordenados por apellido
     public function empleadosOrdenados()
     {
         $empleados = Empleado::select('nombre', 'apellido', 'documento', 'email', 'telefono')
@@ -29,7 +29,7 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 2. Maquinaria pesada con mantenimientos de costo superior a 1 millón
+    // Maquinaria pesada con mantenimientos de costo superior a 1 millón
     public function maquinariaPesadaCostosa()
     {
         $maquinaria = TipoMaquinaria::join('mantenimientos', 'tipo_maquinarias.id', '=', 'mantenimientos.tipo_maquinaria_id')
@@ -51,7 +51,7 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 3. Empresa con mayor número de solicitudes
+    // Empresa con mayor número de solicitudes
     public function empresaMasSolicitudes()
     {
         $empresa = Empresa::join('solicituds', 'empresas.id', '=', 'solicituds.empresa_id')
@@ -74,7 +74,7 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 4. Total de máquinas con solicitud de mantenimiento de empresa Argos
+    //  Total de máquinas con solicitud de mantenimiento de empresa Argos
     public function maquinasArgos()
     {
         $total = DetalleSolicitud::join('solicituds', 'detalle_solicituds.solicitud_id', '=', 'solicituds.id')
@@ -91,17 +91,24 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 5. Datos de las solicitudes que debe atender el Empleado con número de documento 1057896547.
-    public function solicitudesEmpleado()
-    {
-        $solicitudes = Solicitud::whereHas('empleados', function ($query) {
-            $query->where('documento', '1057896547');
-        })->with('empleados')->get();
+    // Datos de las solicitudes que debe atender el Empleado con número de documento 1057896547.
+public function solicitudesEmpleado()
+{
+    $documento = '1057896547';
 
-        return response()->json($solicitudes);
-    }
+    $solicitudes = Solicitud::whereHas('empleados', function ($query) use ($documento) {
+            $query->where('documento', $documento);
+        })
+        ->with(['empleados' => function ($query) use ($documento) {
+            $query->where('documento', $documento);
+        }])
+        ->get();
 
-    // 6. Representantes y empresas sin solicitudes
+    return response()->json($solicitudes);
+}
+
+
+    //  Representantes y empresas sin solicitudes
     public function representantesEmpresasSinSolicitudes()
     {
         $representantes = Representante::join('empresas', 'representantes.empresa_id', '=', 'empresas.id')
@@ -116,7 +123,7 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 7. Listado con empresa, código solicitud, máquina y valor total
+    //  Listado con empresa, código solicitud, máquina y valor total
     public function listadoSolicitudes()
     {
         $solicitudes = Solicitud::join('empresas', 'solicituds.empresa_id', '=', 'empresas.id')
@@ -136,7 +143,7 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 8. Búsqueda de solicitud por código y empleados asignados
+    // Búsqueda de solicitud por código y empleados asignados
     public function solicitudPorCodigo(Request $request)
     {
         $request->validate([
@@ -167,7 +174,7 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 9. Cantidad de mantenimientos asignados a retroexcavadoras
+    // Cantidad de mantenimientos asignados a retroexcavadoras
     public function mantenimientosRetroexcavadoras()
     {
         $cantidad = DetalleSolicitud::join('mantenimientos', 'detalle_solicituds.mantenimiento_id', '=', 'mantenimientos.id')
@@ -184,7 +191,7 @@ class ConsultaController extends Controller
         ]);
     }
 
-    // 10. Listado de solicitudes de octubre 2023
+    //  Listado de solicitudes de octubre 2023
     public function solicitudesOctubre2023()
     {
         $solicitudes = Solicitud::join('empresas', 'solicituds.empresa_id', '=', 'empresas.id')

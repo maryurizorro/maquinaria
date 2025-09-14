@@ -25,6 +25,8 @@ class MantenimientoController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'costo' => 'required|numeric|min:0',
+            'tiempo_estimado' => 'nullable|numeric|min:0',
+            'manual_procedimiento' => 'nullable|string|max:1000',
             'tipo_maquinaria_id' => 'required|exists:tipo_maquinarias,id',
         ]);
 

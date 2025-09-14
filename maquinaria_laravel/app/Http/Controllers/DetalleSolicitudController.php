@@ -33,14 +33,14 @@ class DetalleSolicitudController extends Controller
                 'errors' => $validator->errors()
             ], 400);
         }
-
+        
         $subirImagenController = new SubirImagenController();
         $url_imagen = $subirImagenController->subirImagen($request);
 
         // Calcular el costo total
-        $mantenimiento = Mantenimiento::find($request->mantenimiento_id);
+        $mantenimiento = Mantenimiento::find($request->mantenimiento_id);//busca 
         $costo_total = $mantenimiento->costo * $request->cantidad_maquinas;
-
+        //crea el registro
         $detalle = DetalleSolicitud::create([
             'solicitud_id' => $request->solicitud_id,
             'mantenimiento_id' => $request->mantenimiento_id,
@@ -58,7 +58,7 @@ class DetalleSolicitudController extends Controller
 
     public function show($id)
     {
-        $detalle = DetalleSolicitud::with('solicitud.empresa', 'mantenimiento')->find($id);
+        $detalle = DetalleSolicitud::with('solicitud.empresa', 'mantenimiento')->find($id);//carga
 
         if (!$detalle) {
             return response()->json([
@@ -128,7 +128,7 @@ class DetalleSolicitudController extends Controller
 
         // Eliminar imagen asociada
         $subirImagenController = new SubirImagenController();
-        $subirImagenController->EliminarImagen($solicitudDetalle->url_imagen);
+        $subirImagenController->EliminarImagen($solicitudDetalle->Url_foto);
 
         // Eliminar registro
         $solicitudDetalle->delete();
@@ -137,3 +137,16 @@ class DetalleSolicitudController extends Controller
     }
 
 }
+/*
+Empresa 1---1 Representante
+
+Empresa 1---N Solicitud
+
+Solicitud 1---N DetalleSolicitud
+
+TipoMaquinaria 1---N Mantenimiento
+
+CategoriaMaquinaria 1---N TipoMaquinaria
+
+Solicitud N---N Empleado
+ */
