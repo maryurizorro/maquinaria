@@ -14,7 +14,7 @@ use App\Http\Controllers\DetalleSolicitudController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\SolicitudEmpleadoController;
 use App\Http\Controllers\ConsultaController;
-
+Route::get('/api/documentation', '\L5Swagger\Http\Controllers\SwaggerController@api');
 
 // Ruta de prueba para verificar que la API funciona
 Route::get('/', function () {

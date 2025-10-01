@@ -11,18 +11,18 @@ class MantenimientoController extends Controller
     
     /**
      * @OA\Get(
-     *     path="/api/maquinaria_laravel",
-     *     summary="Listar todos los maquinaria_laravel",
-     *     tags={"maquinaria_laravel"},
+     *     path="/api/mantenimientos",
+     *     summary="Listar todos los mantenimientos",
+     *     tags={"Mantenimientos"},
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de maquinaria_laravel",
+     *         description="Lista de mantenimientos",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/maquinaria_laravel")
+     *                 @OA\Items(ref="#/components/schemas/Mantenimiento")
      *             )
      *         )
      *     )
@@ -38,6 +38,22 @@ class MantenimientoController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/mantenimientos",
+     *     summary="Crear un mantenimiento",
+     *     tags={"Mantenimientos"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Mantenimiento creado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -66,7 +82,26 @@ class MantenimientoController extends Controller
             'data' => $mantenimiento->load('tipoMaquinaria')
         ], 201);
     }
-
+ /**
+     * @OA\Get(
+     *     path="/api/mantenimientos/{id}",
+     *     summary="Obtener un mantenimiento por ID",
+     *     tags={"Mantenimientos"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del mantenimiento",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mantenimiento encontrado",
+     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
+     *     ),
+     *     @OA\Response(response=404, description="Mantenimiento no encontrado")
+     * )
+     */
     public function show($id)
     {
         $mantenimiento = Mantenimiento::with('tipoMaquinaria')->find($id);
@@ -83,7 +118,30 @@ class MantenimientoController extends Controller
             'data' => $mantenimiento
         ]);
     }
-
+    /**
+     * @OA\Put(
+     *     path="/api/mantenimientos/{id}",
+     *     summary="Actualizar un mantenimiento",
+     *     tags={"Mantenimientos"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del mantenimiento a actualizar",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mantenimiento actualizado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
+     *     ),
+     *     @OA\Response(response=404, description="Mantenimiento no encontrado")
+     * )
+     */
     public function update(Request $request, $id)
     {
         $mantenimiento = Mantenimiento::find($id);
@@ -110,7 +168,22 @@ class MantenimientoController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
+         /**
+     * @OA\Delete(
+     *     path="/api/mantenimientos/{id}",
+     *     summary="Eliminar un mantenimiento",
+     *     tags={"Mantenimientos"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del mantenimiento a eliminar",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Mantenimiento eliminado exitosamente"),
+     *     @OA\Response(response=404, description="Mantenimiento no encontrado")
+     * )
+     */
         $mantenimiento->update($request->all());
 
         return response()->json([

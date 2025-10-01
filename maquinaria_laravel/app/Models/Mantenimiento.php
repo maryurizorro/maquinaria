@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 /**
  * @OA\Schema(
- *     schema="maquinaria_laravel",
+ *     schema="Mantenimiento",
  *     type="object",
- *     title="Maquinaria",
- *     description="Esquema de una maquinaria",
+ *     title="Mantenimiento",
+ *     description="Modelo que representa un mantenimiento",
  *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nombre", type="string", example="Tractor"),
- *     @OA\Property(property="descripcion", type="string", example="Maquinaria pesada"),
- *     @OA\Property(property="created_at", type="string", format="date-time", example="2025-09-30T10:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-09-30T10:00:00Z")
+ *     @OA\Property(property="tipo_maquinaria_id", type="integer", example=2),
+ *     @OA\Property(property="descripcion", type="string", example="Cambio de aceite y filtros"),
+ *     @OA\Property(property="costo_estimado", type="number", format="float", example=250000.50),
+ *     @OA\Property(property="fecha_programada", type="string", format="date", example="2025-10-05")
  * )
  */
 

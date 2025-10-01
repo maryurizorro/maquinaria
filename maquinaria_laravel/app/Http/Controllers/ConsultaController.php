@@ -14,22 +14,39 @@ use App\Models\Mantenimiento;
 use App\Models\TipoMaquinaria;
 use App\Models\CategoriaMaquinaria;
 
+/**
+ * @OA\Tag(
+ *     name="Consultas",
+ *     description="Consultas personalizadas sobre empleados, empresas, maquinaria y solicitudes"
+ * )
+ */
 class ConsultaController extends Controller
 {
-    //  Listar empleados ordenados por apellido
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/empleados-ordenados",
+     *     tags={"Consultas"},
+     *     summary="Listar empleados ordenados por apellido",
+     *     @OA\Response(response=200, description="Listado de empleados ordenado")
+     * )
+     */
     public function empleadosOrdenados()
     {
         $empleados = Empleado::select('nombre', 'apellido', 'documento', 'email', 'telefono')
             ->orderBy('apellido')
             ->get();
 
-        return response()->json([
-            'status' => true,
-            'data' => $empleados
-        ]);
+        return response()->json(['status' => true, 'data' => $empleados]);
     }
 
-    // Maquinaria pesada con mantenimientos de costo superior a 1 millón
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/maquinaria-costosa",
+     *     tags={"Consultas"},
+     *     summary="Listar maquinaria pesada con mantenimientos superiores a 1 millón",
+     *     @OA\Response(response=200, description="Maquinaria encontrada")
+     * )
+     */
     public function maquinariaPesadaCostosa()
     {
         $maquinaria = TipoMaquinaria::join('mantenimientos', 'tipo_maquinarias.id', '=', 'mantenimientos.tipo_maquinaria_id')
@@ -45,13 +62,17 @@ class ConsultaController extends Controller
             )
             ->get();
 
-        return response()->json([
-            'status' => true,
-            'data' => $maquinaria
-        ]);
+        return response()->json(['status' => true, 'data' => $maquinaria]);
     }
 
-    // Empresa con mayor número de solicitudes
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/empresa-mas-solicitudes",
+     *     tags={"Consultas"},
+     *     summary="Obtener empresa con mayor número de solicitudes",
+     *     @OA\Response(response=200, description="Empresa con más solicitudes")
+     * )
+     */
     public function empresaMasSolicitudes()
     {
         $empresa = Empresa::join('solicituds', 'empresas.id', '=', 'solicituds.empresa_id')
@@ -68,13 +89,17 @@ class ConsultaController extends Controller
             ->orderBy('total_solicitudes', 'desc')
             ->first();
 
-        return response()->json([
-            'status' => true,
-            'data' => $empresa
-        ]);
+        return response()->json(['status' => true, 'data' => $empresa]);
     }
 
-    //  Total de máquinas con solicitud de mantenimiento de empresa Argos
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/maquinas-argos",
+     *     tags={"Consultas"},
+     *     summary="Total de máquinas con solicitud de mantenimiento de empresa Argos",
+     *     @OA\Response(response=200, description="Cantidad de máquinas de Argos")
+     * )
+     */
     public function maquinasArgos()
     {
         $total = DetalleSolicitud::join('solicituds', 'detalle_solicituds.solicitud_id', '=', 'solicituds.id')
@@ -84,31 +109,41 @@ class ConsultaController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => [
-                'total_maquinas' => $total,
-                'empresa' => 'Argos'
-            ]
+            'data' => ['total_maquinas' => $total, 'empresa' => 'Argos']
         ]);
     }
 
-    // Datos de las solicitudes que debe atender el Empleado con número de documento 1057896547.
-public function solicitudesEmpleado()
-{
-    $documento = '1057896547';
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/solicitudes-empleado",
+     *     tags={"Consultas"},
+     *     summary="Solicitudes que debe atender el empleado con documento 1057896547",
+     *     @OA\Response(response=200, description="Solicitudes asignadas")
+     * )
+     */
+    public function solicitudesEmpleado()
+    {
+        $documento = '1057896547';
 
-    $solicitudes = Solicitud::whereHas('empleados', function ($query) use ($documento) {
-            $query->where('documento', $documento);
-        })
-        ->with(['empleados' => function ($query) use ($documento) {
-            $query->where('documento', $documento);
-        }])
-        ->get();
+        $solicitudes = Solicitud::whereHas('empleados', function ($query) use ($documento) {
+                $query->where('documento', $documento);
+            })
+            ->with(['empleados' => function ($query) use ($documento) {
+                $query->where('documento', $documento);
+            }])
+            ->get();
 
-    return response()->json($solicitudes);
-}
+        return response()->json(['status' => true, 'data' => $solicitudes]);
+    }
 
-
-    //  Representantes y empresas sin solicitudes
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/representantes-sin-solicitudes",
+     *     tags={"Consultas"},
+     *     summary="Representantes y empresas sin solicitudes",
+     *     @OA\Response(response=200, description="Representantes encontrados")
+     * )
+     */
     public function representantesEmpresasSinSolicitudes()
     {
         $representantes = Representante::join('empresas', 'representantes.empresa_id', '=', 'empresas.id')
@@ -117,13 +152,17 @@ public function solicitudesEmpleado()
             ->select('representantes.*', 'empresas.nombre as empresa_nombre')
             ->get();
 
-        return response()->json([
-            'status' => true,
-            'data' => $representantes
-        ]);
+        return response()->json(['status' => true, 'data' => $representantes]);
     }
 
-    //  Listado con empresa, código solicitud, máquina y valor total
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/listado-solicitudes",
+     *     tags={"Consultas"},
+     *     summary="Listado de solicitudes con empresa, código, máquina y valor total",
+     *     @OA\Response(response=200, description="Listado obtenido")
+     * )
+     */
     public function listadoSolicitudes()
     {
         $solicitudes = Solicitud::join('empresas', 'solicituds.empresa_id', '=', 'empresas.id')
@@ -137,18 +176,28 @@ public function solicitudesEmpleado()
             )
             ->get();
 
-        return response()->json([
-            'status' => true,
-            'data' => $solicitudes
-        ]);
+        return response()->json(['status' => true, 'data' => $solicitudes]);
     }
 
-    // Búsqueda de solicitud por código y empleados asignados
+    /**
+     * @OA\Post(
+     *     path="/api/consultas/solicitud-codigo",
+     *     tags={"Consultas"},
+     *     summary="Buscar solicitud por código y empleados asignados",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"codigo"},
+     *             @OA\Property(property="codigo", type="string", example="SOL123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Solicitud encontrada"),
+     *     @OA\Response(response=404, description="Solicitud no encontrada")
+     * )
+     */
     public function solicitudPorCodigo(Request $request)
     {
-        $request->validate([
-            'codigo' => 'required|string'
-        ]);
+        $request->validate(['codigo' => 'required|string']);
 
         $solicitud = Solicitud::where('codigo', $request->codigo)
             ->with([
@@ -162,19 +211,20 @@ public function solicitudesEmpleado()
             ->first();
 
         if (!$solicitud) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Solicitud no encontrada'
-            ], 404);
+            return response()->json(['status' => false, 'message' => 'Solicitud no encontrada'], 404);
         }
 
-        return response()->json([
-            'status' => true,
-            'data' => $solicitud
-        ]);
+        return response()->json(['status' => true, 'data' => $solicitud]);
     }
 
-    // Cantidad de mantenimientos asignados a retroexcavadoras
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/mantenimientos-retroexcavadoras",
+     *     tags={"Consultas"},
+     *     summary="Cantidad de mantenimientos asignados a retroexcavadoras",
+     *     @OA\Response(response=200, description="Cantidad obtenida")
+     * )
+     */
     public function mantenimientosRetroexcavadoras()
     {
         $cantidad = DetalleSolicitud::join('mantenimientos', 'detalle_solicituds.mantenimiento_id', '=', 'mantenimientos.id')
@@ -191,7 +241,14 @@ public function solicitudesEmpleado()
         ]);
     }
 
-    //  Listado de solicitudes de octubre 2023
+    /**
+     * @OA\Get(
+     *     path="/api/consultas/solicitudes-octubre-2023",
+     *     tags={"Consultas"},
+     *     summary="Listado de solicitudes de octubre 2023",
+     *     @OA\Response(response=200, description="Solicitudes encontradas")
+     * )
+     */
     public function solicitudesOctubre2023()
     {
         $solicitudes = Solicitud::join('empresas', 'solicituds.empresa_id', '=', 'empresas.id')
@@ -209,9 +266,6 @@ public function solicitudesEmpleado()
             )
             ->get();
 
-        return response()->json([
-            'status' => true,
-            'data' => $solicitudes
-        ]);
+        return response()->json(['status' => true, 'data' => $solicitudes]);
     }
 }

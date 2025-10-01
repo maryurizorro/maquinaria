@@ -12,16 +12,1177 @@
         }
     ],
     "paths": {
-        "/api/maquinaria_laravel": {
-            "get": {
+        "/api/register": {
+            "post": {
                 "tags": [
-                    "maquinaria_laravel"
+                    "Auth"
                 ],
-                "summary": "Listar todos los maquinaria_laravel",
-                "operationId": "cc1d3dc755fcce2ea4a19a08fe8549fc",
+                "summary": "Registrar un nuevo usuario",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "rol"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Maryuri Zorro"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "maryuri@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "123456"
+                                    },
+                                    "rol": {
+                                        "type": "string",
+                                        "enum": [
+                                            "admin",
+                                            "empleado",
+                                            "supervisor"
+                                        ],
+                                        "example": "empleado"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuario registrado exitosamente"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "$ref": "#/components/schemas/User"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "1|Xyz123abc456..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Iniciar sesión",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "maryuri@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Lista de maquinaria_laravel",
+                        "description": "Login exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login exitoso"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "$ref": "#/components/schemas/User"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "1|Xyz123abc456..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciales inválidas"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Cerrar sesión",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Logout exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logout exitoso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Obtener perfil del usuario autenticado",
+                "operationId": "9d9bc556f927575aa492a88c28fe5908",
+                "responses": {
+                    "200": {
+                        "description": "Perfil del usuario autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categorias": {
+            "get": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Listar todas las categorías",
+                "operationId": "00d9b3c4359044674c4dafe7c158495d",
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorías con sus tipos de maquinaria",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CategoriaMaquinaria"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Crear una nueva categoría",
+                "operationId": "eb178d26b88f7e1e101a13507174ce37",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Excavadoras"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Máquinas para excavación"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Categoría creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaMaquinaria"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/categorias/{id}": {
+            "get": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Obtener una categoría por ID",
+                "operationId": "360086981d826f9bf4a8814e93d254ac",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoría encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaMaquinaria"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Actualizar una categoría existente",
+                "operationId": "d4e3da17f9c714cfd325c4df2ff1b91a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Grúas"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Maquinaria de elevación"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Categoría actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriaMaquinaria"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Eliminar una categoría",
+                "operationId": "8c5a4ff8fb6c89dc732c9ecbac6df8ed",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoría eliminada exitosamente"
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    }
+                }
+            }
+        },
+        "/api/consultas/empleados-ordenados": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Listar empleados ordenados por apellido",
+                "operationId": "0b419333f6155af19f17b2d6ffb58913",
+                "responses": {
+                    "200": {
+                        "description": "Listado de empleados ordenado"
+                    }
+                }
+            }
+        },
+        "/api/consultas/maquinaria-costosa": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Listar maquinaria pesada con mantenimientos superiores a 1 millón",
+                "operationId": "de985cce03101b448ea1dd93b0c1e6a4",
+                "responses": {
+                    "200": {
+                        "description": "Maquinaria encontrada"
+                    }
+                }
+            }
+        },
+        "/api/consultas/empresa-mas-solicitudes": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Obtener empresa con mayor número de solicitudes",
+                "operationId": "5f1026a08cffa84bb907e0a58f9dab63",
+                "responses": {
+                    "200": {
+                        "description": "Empresa con más solicitudes"
+                    }
+                }
+            }
+        },
+        "/api/consultas/maquinas-argos": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Total de máquinas con solicitud de mantenimiento de empresa Argos",
+                "operationId": "db2e8dae915b8eadf7c7c3fcba3e7fdc",
+                "responses": {
+                    "200": {
+                        "description": "Cantidad de máquinas de Argos"
+                    }
+                }
+            }
+        },
+        "/api/consultas/solicitudes-empleado": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Solicitudes que debe atender el empleado con documento 1057896547",
+                "operationId": "0c1f6a504f476c7cb0061f41ba70d036",
+                "responses": {
+                    "200": {
+                        "description": "Solicitudes asignadas"
+                    }
+                }
+            }
+        },
+        "/api/consultas/representantes-sin-solicitudes": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Representantes y empresas sin solicitudes",
+                "operationId": "4271868aa0cdc4ee7e89a47b53318fb1",
+                "responses": {
+                    "200": {
+                        "description": "Representantes encontrados"
+                    }
+                }
+            }
+        },
+        "/api/consultas/listado-solicitudes": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Listado de solicitudes con empresa, código, máquina y valor total",
+                "operationId": "6832d0a90836dc86ed5490512a4deec8",
+                "responses": {
+                    "200": {
+                        "description": "Listado obtenido"
+                    }
+                }
+            }
+        },
+        "/api/consultas/solicitud-codigo": {
+            "post": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Buscar solicitud por código y empleados asignados",
+                "operationId": "6163e7ff6e13865077bb87f22774ec35",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "codigo"
+                                ],
+                                "properties": {
+                                    "codigo": {
+                                        "type": "string",
+                                        "example": "SOL123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Solicitud encontrada"
+                    },
+                    "404": {
+                        "description": "Solicitud no encontrada"
+                    }
+                }
+            }
+        },
+        "/api/consultas/mantenimientos-retroexcavadoras": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Cantidad de mantenimientos asignados a retroexcavadoras",
+                "operationId": "f476c003d4a2001e55d2a849d2c99759",
+                "responses": {
+                    "200": {
+                        "description": "Cantidad obtenida"
+                    }
+                }
+            }
+        },
+        "/api/consultas/solicitudes-octubre-2023": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Listado de solicitudes de octubre 2023",
+                "operationId": "d3ad55a43f14071f1a71c859653aa9ee",
+                "responses": {
+                    "200": {
+                        "description": "Solicitudes encontradas"
+                    }
+                }
+            }
+        },
+        "/api/detalles-solicitud": {
+            "get": {
+                "tags": [
+                    "DetalleSolicitud"
+                ],
+                "summary": "Listar todos los detalles de solicitud",
+                "operationId": "e289435470a3baebced6e9de71d5b72f",
+                "responses": {
+                    "200": {
+                        "description": "Lista de detalles de solicitud",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DetalleSolicitud"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "DetalleSolicitud"
+                ],
+                "summary": "Crear un detalle de solicitud",
+                "operationId": "9d7895f748f9fbe40d3401800fc62902",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "solicitud_id",
+                                    "mantenimiento_id",
+                                    "cantidad_maquinas",
+                                    "Url_foto"
+                                ],
+                                "properties": {
+                                    "solicitud_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "mantenimiento_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "cantidad_maquinas": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "Url_foto": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Detalle de solicitud creado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetalleSolicitud"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/detalles-solicitud/{id}": {
+            "get": {
+                "tags": [
+                    "DetalleSolicitud"
+                ],
+                "summary": "Obtener un detalle de solicitud por ID",
+                "operationId": "0366f8d3ef137566df78637e7df001e9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del detalle de solicitud",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetalleSolicitud"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Detalle no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "DetalleSolicitud"
+                ],
+                "summary": "Actualizar un detalle de solicitud",
+                "operationId": "a95d158d8406e14406f88dfd26dc1368",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "cantidad_maquinas": {
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "mantenimiento_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Detalle actualizado"
+                    },
+                    "404": {
+                        "description": "Detalle no encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "DetalleSolicitud"
+                ],
+                "summary": "Eliminar un detalle de solicitud",
+                "operationId": "568cdadc58935874a44bc92efea169e1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle eliminado"
+                    },
+                    "404": {
+                        "description": "Detalle no encontrado"
+                    }
+                }
+            }
+        },
+        "/api/empleados": {
+            "get": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Listar empleados",
+                "operationId": "2c1048f5e8e475f9767ccb5005a4a8d6",
+                "responses": {
+                    "200": {
+                        "description": "Lista de empleados con solicitudes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Empleado"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Crear un nuevo empleado",
+                "operationId": "8dbd970d554ec6064a0527ac54baa93f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Empleado"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empleado creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empleado"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/empleados/{id}": {
+            "get": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Obtener un empleado por ID",
+                "operationId": "7d4cc7b8b0f8f7ee805539c3711aed25",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empleado encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empleado"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empleado no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Actualizar un empleado",
+                "operationId": "032112c4832b57bdfbf99a313486352d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Empleado"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Empleado actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empleado"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empleado no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Eliminar un empleado",
+                "operationId": "cc4ed7cb13a8f08b869cb1b1775ec40f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empleado eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "Empleado no encontrado"
+                    }
+                }
+            }
+        },
+        "/api/empresas": {
+            "get": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Listar todas las empresas",
+                "operationId": "e5d40f6ab397a2e07d02f50d3eb395f3",
+                "responses": {
+                    "200": {
+                        "description": "Lista de empresas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Empresa"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Crear una nueva empresa",
+                "operationId": "b400bda696995ef09cec01e24e345e39",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "nit",
+                                    "direccion",
+                                    "telefono",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Constructora XYZ"
+                                    },
+                                    "nit": {
+                                        "type": "string",
+                                        "example": "900123456-7"
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "Calle 123 #45-67"
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "3001234567"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "contacto@xyz.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empresa creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empresa"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/empresas/{id}": {
+            "get": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Obtener una empresa por ID",
+                "operationId": "01cf4a33a64fd815d116b70387a19e57",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empresa encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empresa"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa no encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Actualizar una empresa existente",
+                "operationId": "d6113af3348fcbc0ad3ca2ed8ce6e89e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Constructora ABC"
+                                    },
+                                    "nit": {
+                                        "type": "string",
+                                        "example": "900987654-3"
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "Carrera 10 #20-30"
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "3016549870"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "info@abc.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Empresa actualizada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empresa"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa no encontrada"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Empresas"
+                ],
+                "summary": "Eliminar una empresa",
+                "operationId": "b8ac3362ec3de93acdd573849c335811",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empresa eliminada exitosamente"
+                    },
+                    "404": {
+                        "description": "Empresa no encontrada"
+                    }
+                }
+            }
+        },
+        "/api/mantenimientos": {
+            "get": {
+                "tags": [
+                    "Mantenimientos"
+                ],
+                "summary": "Listar todos los mantenimientos",
+                "operationId": "98eb8bd3b5c15a4078751d0c2f9d12ad",
+                "responses": {
+                    "200": {
+                        "description": "Lista de mantenimientos",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -32,7 +1193,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/maquinaria_laravel"
+                                                "$ref": "#/components/schemas/Mantenimiento"
                                             }
                                         }
                                     },
@@ -42,14 +1203,1075 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Mantenimientos"
+                ],
+                "summary": "Crear un mantenimiento",
+                "operationId": "2e7dbf32fd0b9bd23aa7c42ce7a2d530",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Mantenimiento"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Mantenimiento creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Mantenimiento"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/mantenimientos/{id}": {
+            "get": {
+                "tags": [
+                    "Mantenimientos"
+                ],
+                "summary": "Obtener un mantenimiento por ID",
+                "operationId": "f1eccfea98c96e09c78b65db74a6c46e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del mantenimiento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mantenimiento encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Mantenimiento"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Mantenimiento no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Mantenimientos"
+                ],
+                "summary": "Actualizar un mantenimiento",
+                "operationId": "7b682cf6eb6fd45d9f93d8d5132d63f5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del mantenimiento a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Mantenimiento"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mantenimiento actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Mantenimiento"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Mantenimiento no encontrado"
+                    }
+                }
+            }
+        },
+        "/api/representantes": {
+            "get": {
+                "tags": [
+                    "Representantes"
+                ],
+                "summary": "Listar representantes",
+                "operationId": "6008b663f14f39a1522320f3f85bab7a",
+                "responses": {
+                    "200": {
+                        "description": "Lista de representantes con su empresa"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Representantes"
+                ],
+                "summary": "Crear un nuevo representante",
+                "operationId": "0864af7e6f3dfda79237aa41a3e2bce5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "apellido",
+                                    "documento",
+                                    "telefono",
+                                    "email",
+                                    "empresa_id"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Juan"
+                                    },
+                                    "apellido": {
+                                        "type": "string",
+                                        "example": "Pérez"
+                                    },
+                                    "documento": {
+                                        "type": "string",
+                                        "example": "12345678"
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "3001234567"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "juan@example.com"
+                                    },
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Representante creado exitosamente"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/representantes/{id}": {
+            "get": {
+                "tags": [
+                    "Representantes"
+                ],
+                "summary": "Obtener un representante",
+                "operationId": "e41e6b27b54ada68ee6c9b87f6df3aea",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del representante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Representante encontrado"
+                    },
+                    "404": {
+                        "description": "Representante no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Representantes"
+                ],
+                "summary": "Actualizar un representante",
+                "operationId": "9416ee2beb70668005c7776a3fee5696",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del representante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Carlos"
+                                    },
+                                    "apellido": {
+                                        "type": "string",
+                                        "example": "Ramírez"
+                                    },
+                                    "documento": {
+                                        "type": "string",
+                                        "example": "98765432"
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "3209876543"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "carlos@example.com"
+                                    },
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Representante actualizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Representante no encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Representantes"
+                ],
+                "summary": "Eliminar un representante",
+                "operationId": "483d2e61f4384d2135c7c828095e9a98",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del representante",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Representante eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "Representante no encontrado"
+                    }
+                }
+            }
+        },
+        "/api/solicitudes": {
+            "get": {
+                "tags": [
+                    "Solicitudes"
+                ],
+                "summary": "Listar todas las solicitudes",
+                "operationId": "86ca78efe3491a9edac19c7b99751249",
+                "responses": {
+                    "200": {
+                        "description": "Lista de solicitudes"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Solicitudes"
+                ],
+                "summary": "Crear una nueva solicitud",
+                "operationId": "39195eac694b6777797f4a1b96e9a8d1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "codigo",
+                                    "fecha_solicitud",
+                                    "empresa_id"
+                                ],
+                                "properties": {
+                                    "codigo": {
+                                        "type": "string",
+                                        "example": "SOL-2025-001"
+                                    },
+                                    "fecha_solicitud": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-09-30"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "example": "pendiente"
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Revisión de maquinaria pesada"
+                                    },
+                                    "descripcion_solicitud": {
+                                        "type": "string",
+                                        "example": "Solicitud de mantenimiento de excavadora"
+                                    },
+                                    "fecha_deseada": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-10-15"
+                                    },
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Solicitud creada exitosamente"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/solicitudes/{id}": {
+            "get": {
+                "tags": [
+                    "Solicitudes"
+                ],
+                "summary": "Obtener una solicitud",
+                "operationId": "a182b03e832c20f1daa28a8a88cb8708",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la solicitud",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solicitud encontrada"
+                    },
+                    "404": {
+                        "description": "Solicitud no encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Solicitudes"
+                ],
+                "summary": "Actualizar una solicitud",
+                "operationId": "f3ed66ada23012a3ba775f0b5c6aeee6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la solicitud",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "codigo": {
+                                        "type": "string",
+                                        "example": "SOL-2025-002"
+                                    },
+                                    "fecha_solicitud": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-09-28"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "example": "en_proceso"
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "example": "Se requiere repuesto urgente"
+                                    },
+                                    "descripcion_solicitud": {
+                                        "type": "string",
+                                        "example": "Solicitud de mantenimiento de cargador frontal"
+                                    },
+                                    "fecha_deseada": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-10-20"
+                                    },
+                                    "empresa_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Solicitud actualizada exitosamente"
+                    },
+                    "404": {
+                        "description": "Solicitud no encontrada"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Solicitudes"
+                ],
+                "summary": "Eliminar una solicitud",
+                "operationId": "0f6855dd992f2aae3a0df864b7df9035",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la solicitud",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solicitud eliminada exitosamente"
+                    },
+                    "404": {
+                        "description": "Solicitud no encontrada"
+                    }
+                }
+            }
+        },
+        "/api/solicitud-empleados": {
+            "get": {
+                "tags": [
+                    "SolicitudEmpleado"
+                ],
+                "summary": "Listar todas las asignaciones de empleados a solicitudes",
+                "operationId": "21f3aff939d70b091f130fa78f501f51",
+                "responses": {
+                    "200": {
+                        "description": "Lista de asignaciones",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SolicitudEmpleado"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "SolicitudEmpleado"
+                ],
+                "summary": "Asignar un empleado a una solicitud",
+                "operationId": "c33e8fee4dacb4d551976bc01c2185de",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "solicitud_id",
+                                    "empleado_id"
+                                ],
+                                "properties": {
+                                    "solicitud_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "empleado_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asignado",
+                                            "en_proceso",
+                                            "completado"
+                                        ],
+                                        "example": "asignado"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empleado asignado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SolicitudEmpleado"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/solicitud-empleados/{id}": {
+            "get": {
+                "tags": [
+                    "SolicitudEmpleado"
+                ],
+                "summary": "Obtener una asignación por ID",
+                "operationId": "e4134af231e745de16da52a98107a0fc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la asignación",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Asignación encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SolicitudEmpleado"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asignación no encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "SolicitudEmpleado"
+                ],
+                "summary": "Actualizar una asignación",
+                "operationId": "03f68ca86fbd6224953691bfb4572a53",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la asignación",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "estado": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asignado",
+                                            "en_proceso",
+                                            "completado"
+                                        ],
+                                        "example": "en_proceso"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Asignación actualizada correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SolicitudEmpleado"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asignación no encontrada"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "SolicitudEmpleado"
+                ],
+                "summary": "Eliminar una asignación",
+                "operationId": "84f833322d63e965cc87f9f43306cc71",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la asignación",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Asignación eliminada correctamente"
+                    },
+                    "404": {
+                        "description": "Asignación no encontrada"
+                    }
+                }
+            }
+        },
+        "/api/imagenes/subir": {
+            "post": {
+                "tags": [
+                    "Imagenes"
+                ],
+                "summary": "Subir una imagen asociada a una solicitud",
+                "operationId": "2072624b293abdc239bc3ec352312fc1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "Url_foto",
+                                    "solicitud_id"
+                                ],
+                                "properties": {
+                                    "Url_foto": {
+                                        "description": "Imagen a subir (jpeg, png, jpg, gif)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "solicitud_id": {
+                                        "description": "ID de la solicitud asociada",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Imagen subida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Imagen subida correctamente"
+                                        },
+                                        "url": {
+                                            "type": "string",
+                                            "example": "/storage/DetalleSolicitud/1/imagen.jpg"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/imagenes/eliminar": {
+            "delete": {
+                "tags": [
+                    "Imagenes"
+                ],
+                "summary": "Eliminar una imagen por URL",
+                "operationId": "135a746224c5b45f93a40098630e0958",
+                "parameters": [
+                    {
+                        "name": "urlImagen",
+                        "in": "query",
+                        "description": "URL de la imagen a eliminar (ejemplo: /storage/DetalleSolicitud/1/imagen.jpg)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Imagen eliminada correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Imagen eliminada exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Imagen no encontrada"
+                    }
+                }
+            }
+        },
+        "/api/tipos-maquinaria": {
+            "get": {
+                "tags": [
+                    "Tipos de Maquinaria"
+                ],
+                "summary": "Listar todos los tipos de maquinaria",
+                "operationId": "5a603a21ad7e77667670201e6cd9be4a",
+                "responses": {
+                    "200": {
+                        "description": "Listado de tipos de maquinaria",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TipoMaquinaria"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tipos de Maquinaria"
+                ],
+                "summary": "Crear un nuevo tipo de maquinaria",
+                "operationId": "b9972420abd6ea3bd4ca6da14f2c7d2b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "categoria_id"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Excavadora"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Maquinaria pesada usada para excavación"
+                                    },
+                                    "categoria_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tipo de maquinaria creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de maquinaria creado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoMaquinaria"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tipos-maquinaria/{id}": {
+            "get": {
+                "tags": [
+                    "Tipos de Maquinaria"
+                ],
+                "summary": "Obtener un tipo de maquinaria por ID",
+                "operationId": "b50a0a6cd7510b7474ef595817a308c8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de maquinaria",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de maquinaria encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoMaquinaria"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tipo de maquinaria no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tipos de Maquinaria"
+                ],
+                "summary": "Actualizar un tipo de maquinaria",
+                "operationId": "fe54e1a1eff2e3bc00327aca56efc351",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de maquinaria",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Retroexcavadora"
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "example": "Equipo usado para remover tierra"
+                                    },
+                                    "categoria_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tipo de maquinaria actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de maquinaria actualizado exitosamente"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TipoMaquinaria"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tipos de Maquinaria"
+                ],
+                "summary": "Eliminar un tipo de maquinaria",
+                "operationId": "f085956acdab1020c9c7c22fa622b983",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tipo de maquinaria",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tipo de maquinaria eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tipo de maquinaria eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tipo de maquinaria no encontrado"
+                    }
+                }
             }
         }
     },
     "components": {
         "schemas": {
-            "maquinaria_laravel": {
-                "title": "Maquinaria",
-                "description": "Esquema de una maquinaria",
+            "CategoriaMaquinaria": {
+                "title": "Categoría de Maquinaria",
+                "required": [
+                    "nombre"
+                ],
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -57,11 +2279,307 @@
                     },
                     "nombre": {
                         "type": "string",
-                        "example": "Tractor"
+                        "example": "Excavadoras"
                     },
                     "descripcion": {
                         "type": "string",
-                        "example": "Maquinaria pesada"
+                        "example": "Máquinas para excavar"
+                    },
+                    "tiposMaquinaria": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "DetalleSolicitud": {
+                "title": "Detalle de Solicitud",
+                "description": "Modelo que representa un detalle dentro de una solicitud de mantenimiento",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "solicitud_id": {
+                        "description": "ID de la solicitud relacionada",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "mantenimiento_id": {
+                        "description": "ID del mantenimiento relacionado",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "cantidad_maquinas": {
+                        "description": "Número de máquinas solicitadas",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "costo_total": {
+                        "description": "Costo total del detalle",
+                        "type": "number",
+                        "format": "float",
+                        "example": 1500.5
+                    },
+                    "Url_foto": {
+                        "description": "Ruta de la imagen subida",
+                        "type": "string",
+                        "example": "uploads/imagenes/maquina1.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "Empleado": {
+                "title": "Empleado",
+                "description": "Modelo que representa un empleado",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Juan"
+                    },
+                    "apellido": {
+                        "type": "string",
+                        "example": "Pérez"
+                    },
+                    "documento": {
+                        "type": "string",
+                        "example": "12345678"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "juan.perez@example.com"
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "example": "Calle 123"
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "3001234567"
+                    },
+                    "rol": {
+                        "type": "string",
+                        "example": "Administrador"
+                    }
+                },
+                "type": "object"
+            },
+            "Empresa": {
+                "title": "Empresa",
+                "description": "Modelo de Empresa con sus relaciones",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Constructora XYZ"
+                    },
+                    "nit": {
+                        "type": "string",
+                        "example": "900123456-7"
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "example": "Calle 123 #45-67"
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "3001234567"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "contacto@xyz.com"
+                    },
+                    "representantes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Representante"
+                        }
+                    },
+                    "solicitudes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Solicitud"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-30T12:34:56Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-30T12:34:56Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Mantenimiento": {
+                "title": "Mantenimiento",
+                "description": "Modelo que representa un mantenimiento",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tipo_maquinaria_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Cambio de aceite y filtros"
+                    },
+                    "costo_estimado": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 250000.5
+                    },
+                    "fecha_programada": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-10-05"
+                    }
+                },
+                "type": "object"
+            },
+            "Representante": {
+                "required": [
+                    "nombre",
+                    "apellido",
+                    "documento",
+                    "telefono",
+                    "email",
+                    "empresa_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Juan"
+                    },
+                    "apellido": {
+                        "type": "string",
+                        "example": "Pérez"
+                    },
+                    "documento": {
+                        "type": "string",
+                        "example": "12345678"
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "3001234567"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "juan@example.com"
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Solicitud": {
+                "required": [
+                    "codigo",
+                    "fecha_solicitud",
+                    "empresa_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "codigo": {
+                        "type": "string",
+                        "example": "SOL-2025-001"
+                    },
+                    "fecha_solicitud": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-09-30"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "example": "pendiente"
+                    },
+                    "observaciones": {
+                        "type": "string",
+                        "example": "Solicitud para mantenimiento general"
+                    },
+                    "descripcion_solicitud": {
+                        "type": "string",
+                        "example": "Se requiere mantenimiento de maquinaria pesada"
+                    },
+                    "fecha_deseada": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-10-15"
+                    },
+                    "empresa_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "SolicitudEmpleado": {
+                "title": "SolicitudEmpleado",
+                "required": [
+                    "solicitud_id",
+                    "empleado_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "solicitud_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "empleado_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "asignado",
+                            "en_proceso",
+                            "completado"
+                        ],
+                        "example": "asignado"
                     },
                     "created_at": {
                         "type": "string",
@@ -71,7 +2589,83 @@
                     "updated_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2025-09-30T10:00:00Z"
+                        "example": "2025-09-30T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "TipoMaquinaria": {
+                "title": "Tipo de Maquinaria",
+                "required": [
+                    "nombre",
+                    "categoria_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Excavadora"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Equipo de construcción usado para excavar"
+                    },
+                    "categoria_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-30T14:48:00.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-30T14:48:00.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "Usuario",
+                "required": [
+                    "name",
+                    "email",
+                    "rol"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Maryuri Lizeth Zorro"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "maryuri@example.com"
+                    },
+                    "rol": {
+                        "type": "string",
+                        "enum": [
+                            "admin",
+                            "empleado",
+                            "supervisor"
+                        ],
+                        "example": "empleado"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -80,8 +2674,52 @@
     },
     "tags": [
         {
-            "name": "maquinaria_laravel",
-            "description": "maquinaria_laravel"
+            "name": "Auth",
+            "description": "Endpoints de autenticación (Registro, Login, Logout, Perfil)"
+        },
+        {
+            "name": "Categorias",
+            "description": "Operaciones relacionadas con las categorías de maquinaria"
+        },
+        {
+            "name": "Consultas",
+            "description": "Consultas personalizadas sobre empleados, empresas, maquinaria y solicitudes"
+        },
+        {
+            "name": "Empresas",
+            "description": "Endpoints para gestionar empresas"
+        },
+        {
+            "name": "DetalleSolicitud",
+            "description": "DetalleSolicitud"
+        },
+        {
+            "name": "Empleados",
+            "description": "Empleados"
+        },
+        {
+            "name": "Mantenimientos",
+            "description": "Mantenimientos"
+        },
+        {
+            "name": "Representantes",
+            "description": "Representantes"
+        },
+        {
+            "name": "Solicitudes",
+            "description": "Solicitudes"
+        },
+        {
+            "name": "SolicitudEmpleado",
+            "description": "SolicitudEmpleado"
+        },
+        {
+            "name": "Imagenes",
+            "description": "Imagenes"
+        },
+        {
+            "name": "Tipos de Maquinaria",
+            "description": "Tipos de Maquinaria"
         }
     ]
 }

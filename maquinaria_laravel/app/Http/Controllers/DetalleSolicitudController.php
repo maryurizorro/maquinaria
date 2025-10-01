@@ -7,8 +7,29 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\DetalleSolicitud;
 use App\Models\Mantenimiento;
 
+
 class DetalleSolicitudController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/detalles-solicitud",
+     *     summary="Listar todos los detalles de solicitud",
+     *     tags={"DetalleSolicitud"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de detalles de solicitud",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/DetalleSolicitud")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function index()
     {
         $detalles = DetalleSolicitud::with('solicitud.empresa', 'mantenimiento')->get();
@@ -19,6 +40,28 @@ class DetalleSolicitudController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/detalles-solicitud",
+     *     summary="Crear un detalle de solicitud",
+     *     tags={"DetalleSolicitud"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"solicitud_id","mantenimiento_id","cantidad_maquinas","Url_foto"},
+     *             @OA\Property(property="solicitud_id", type="integer", example=1),
+     *             @OA\Property(property="mantenimiento_id", type="integer", example=2),
+     *             @OA\Property(property="cantidad_maquinas", type="integer", example=3),
+     *             @OA\Property(property="Url_foto", type="string", format="binary")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Detalle de solicitud creado",
+     *         @OA\JsonContent(ref="#/components/schemas/DetalleSolicitud")
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -37,10 +80,9 @@ class DetalleSolicitudController extends Controller
         $subirImagenController = new SubirImagenController();
         $url_imagen = $subirImagenController->subirImagen($request);
 
-        // Calcular el costo total
-        $mantenimiento = Mantenimiento::find($request->mantenimiento_id);//busca 
+        $mantenimiento = Mantenimiento::find($request->mantenimiento_id);
         $costo_total = $mantenimiento->costo * $request->cantidad_maquinas;
-        //crea el registro
+
         $detalle = DetalleSolicitud::create([
             'solicitud_id' => $request->solicitud_id,
             'mantenimiento_id' => $request->mantenimiento_id,
@@ -56,9 +98,29 @@ class DetalleSolicitudController extends Controller
         ], 201);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/detalles-solicitud/{id}",
+     *     summary="Obtener un detalle de solicitud por ID",
+     *     tags={"DetalleSolicitud"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer"),
+     *         description="ID del detalle de solicitud"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalle encontrado",
+     *         @OA\JsonContent(ref="#/components/schemas/DetalleSolicitud")
+     *     ),
+     *     @OA\Response(response=404, description="Detalle no encontrado")
+     * )
+     */
     public function show($id)
     {
-        $detalle = DetalleSolicitud::with('solicitud.empresa', 'mantenimiento')->find($id);//carga
+        $detalle = DetalleSolicitud::with('solicitud.empresa', 'mantenimiento')->find($id);
 
         if (!$detalle) {
             return response()->json([
@@ -73,6 +135,27 @@ class DetalleSolicitudController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/detalles-solicitud/{id}",
+     *     summary="Actualizar un detalle de solicitud",
+     *     tags={"DetalleSolicitud"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="cantidad_maquinas", type="integer", example=4),
+     *             @OA\Property(property="mantenimiento_id", type="integer", example=2)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Detalle actualizado"),
+     *     @OA\Response(response=404, description="Detalle no encontrado")
+     * )
+     */
     public function update(Request $request, $id)
     {
         $detalle = DetalleSolicitud::find($id);
@@ -98,7 +181,6 @@ class DetalleSolicitudController extends Controller
             ], 422);
         }
 
-        // Recalcular el costo total si cambia la cantidad o el mantenimiento
         if ($request->has('cantidad_maquinas') || $request->has('mantenimiento_id')) {
             $mantenimiento_id = $request->mantenimiento_id ?? $detalle->mantenimiento_id;
             $cantidad = $request->cantidad_maquinas ?? $detalle->cantidad_maquinas;
@@ -118,6 +200,21 @@ class DetalleSolicitudController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/detalles-solicitud/{id}",
+     *     summary="Eliminar un detalle de solicitud",
+     *     tags={"DetalleSolicitud"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Detalle eliminado"),
+     *     @OA\Response(response=404, description="Detalle no encontrado")
+     * )
+     */
     public function destroy(string $id)
     {
         $solicitudDetalle = DetalleSolicitud::find($id);
@@ -126,27 +223,11 @@ class DetalleSolicitudController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        // Eliminar imagen asociada
         $subirImagenController = new SubirImagenController();
         $subirImagenController->EliminarImagen($solicitudDetalle->Url_foto);
 
-        // Eliminar registro
         $solicitudDetalle->delete();
 
         return response()->json(['message' => 'Registro eliminado correctamente']);
     }
-
 }
-/*
-Empresa 1---1 Representante
-
-Empresa 1---N Solicitud
-
-Solicitud 1---N DetalleSolicitud
-
-TipoMaquinaria 1---N Mantenimiento
-
-CategoriaMaquinaria 1---N TipoMaquinaria
-
-Solicitud N---N Empleado
- */

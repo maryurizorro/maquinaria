@@ -8,6 +8,17 @@ use App\Models\Representante;
 
 class RepresentanteController extends Controller
 {
+        /**
+     * @OA\Get(
+     *     path="/api/representantes",
+     *     summary="Listar representantes",
+     *     tags={"Representantes"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de representantes con su empresa"
+     *     )
+     * )
+     */
     public function index()
     {
         $representantes = Representante::with('empresa')->get();
@@ -17,7 +28,27 @@ class RepresentanteController extends Controller
             'data' => $representantes
         ]);
     }
-
+    /**
+     * @OA\Post(
+     *     path="/api/representantes",
+     *     summary="Crear un nuevo representante",
+     *     tags={"Representantes"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nombre","apellido","documento","telefono","email","empresa_id"},
+     *             @OA\Property(property="nombre", type="string", example="Juan"),
+     *             @OA\Property(property="apellido", type="string", example="Pérez"),
+     *             @OA\Property(property="documento", type="string", example="12345678"),
+     *             @OA\Property(property="telefono", type="string", example="3001234567"),
+     *             @OA\Property(property="email", type="string", example="juan@example.com"),
+     *             @OA\Property(property="empresa_id", type="integer", example=1),
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Representante creado exitosamente"),
+     *     @OA\Response(response=422, description="Error de validación")
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -45,7 +76,22 @@ class RepresentanteController extends Controller
             'data' => $representante->load('empresa')
         ], 201);
     }
-
+    /**
+     * @OA\Get(
+     *     path="/api/representantes/{id}",
+     *     summary="Obtener un representante",
+     *     tags={"Representantes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         description="ID del representante",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Representante encontrado"),
+     *     @OA\Response(response=404, description="Representante no encontrado")
+     * )
+     */
     public function show($id)
     {
         $representante = Representante::with('empresa')->find($id);
@@ -63,6 +109,33 @@ class RepresentanteController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/representantes/{id}",
+     *     summary="Actualizar un representante",
+     *     tags={"Representantes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         description="ID del representante",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="nombre", type="string", example="Carlos"),
+     *             @OA\Property(property="apellido", type="string", example="Ramírez"),
+     *             @OA\Property(property="documento", type="string", example="98765432"),
+     *             @OA\Property(property="telefono", type="string", example="3209876543"),
+     *             @OA\Property(property="email", type="string", example="carlos@example.com"),
+     *             @OA\Property(property="empresa_id", type="integer", example=2),
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Representante actualizado exitosamente"),
+     *     @OA\Response(response=404, description="Representante no encontrado")
+     * )
+     */
     public function update(Request $request, $id)
     {
         $representante = Representante::find($id);
@@ -99,7 +172,22 @@ class RepresentanteController extends Controller
             'data' => $representante->load('empresa')
         ]);
     }
-
+    /**
+     * @OA\Delete(
+     *     path="/api/representantes/{id}",
+     *     summary="Eliminar un representante",
+     *     tags={"Representantes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         description="ID del representante",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Representante eliminado exitosamente"),
+     *     @OA\Response(response=404, description="Representante no encontrado")
+     * )
+     */
     public function destroy($id)
     {
         $representante = Representante::find($id);
