@@ -144,3 +144,4 @@ try {
     echo "❌ ERROR GENERAL: " . $e->getMessage() . "\n";
     echo "Archivo: " . $e->getFile() . " Línea: " . $e->getLine() . "\n";
 }
+

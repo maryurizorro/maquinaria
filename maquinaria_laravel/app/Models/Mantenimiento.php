@@ -5,6 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
+/**
+ * @OA\Schema(
+ *     schema="maquinaria_laravel",
+ *     type="object",
+ *     title="Maquinaria",
+ *     description="Esquema de una maquinaria",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="nombre", type="string", example="Tractor"),
+ *     @OA\Property(property="descripcion", type="string", example="Maquinaria pesada"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", example="2025-09-30T10:00:00Z"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-09-30T10:00:00Z")
+ * )
+ */
 
 class Mantenimiento extends Model
 {

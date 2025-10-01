@@ -34,7 +34,7 @@ class ConsultaController extends Controller
     {
         $maquinaria = TipoMaquinaria::join('mantenimientos', 'tipo_maquinarias.id', '=', 'mantenimientos.tipo_maquinaria_id')
             ->join('categoria_maquinarias', 'tipo_maquinarias.categoria_id', '=', 'categoria_maquinarias.id')
-            ->where('categoria_maquinarias.nombre', 'like', '%pesado%')
+            ->where('categoria_maquinarias.nombre', 'like', '%Pesada%')
             ->where('mantenimientos.costo', '>', 1000000)
             ->select(
                 'tipo_maquinarias.nombre as tipo_maquinaria',

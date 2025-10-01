@@ -8,6 +8,26 @@ use App\Models\Mantenimiento;
 
 class MantenimientoController extends Controller
 {
+    
+    /**
+     * @OA\Get(
+     *     path="/api/maquinaria_laravel",
+     *     summary="Listar todos los maquinaria_laravel",
+     *     tags={"maquinaria_laravel"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de maquinaria_laravel",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/maquinaria_laravel")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function index()
     {
         $mantenimientos = Mantenimiento::with('tipoMaquinaria')->get();

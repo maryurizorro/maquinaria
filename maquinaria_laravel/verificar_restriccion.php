@@ -114,3 +114,4 @@ try {
     echo "❌ ERROR: " . $e->getMessage() . "\n";
     echo "Archivo: " . $e->getFile() . " Línea: " . $e->getLine() . "\n";
 }
+

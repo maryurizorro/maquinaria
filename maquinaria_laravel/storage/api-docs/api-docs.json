@@ -1,0 +1,87 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Maquinaria",
+        "description": "Documentación de la API de Mantenimientos y Maquinarias",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/api",
+            "description": "Servidor local"
+        }
+    ],
+    "paths": {
+        "/api/maquinaria_laravel": {
+            "get": {
+                "tags": [
+                    "maquinaria_laravel"
+                ],
+                "summary": "Listar todos los maquinaria_laravel",
+                "operationId": "cc1d3dc755fcce2ea4a19a08fe8549fc",
+                "responses": {
+                    "200": {
+                        "description": "Lista de maquinaria_laravel",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/maquinaria_laravel"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "maquinaria_laravel": {
+                "title": "Maquinaria",
+                "description": "Esquema de una maquinaria",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Tractor"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "Maquinaria pesada"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-30T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-30T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "maquinaria_laravel",
+            "description": "maquinaria_laravel"
+        }
+    ]
+}
