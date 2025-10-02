@@ -9,6 +9,19 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
 /**
+ * @OA\Info(
+ *     version="1.0.0",
+ *     title="API de Maquinaria",
+ *     description="Documentación de la API con Laravel y L5-Swagger"
+ * )
+ *
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ * )
+ *
  * @OA\Tag(
  *     name="Auth",
  *     description="Endpoints de autenticación (Registro, Login, Logout, Perfil)"
@@ -158,11 +171,7 @@ class AuthController extends Controller
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Logout exitoso",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Logout exitoso")
-     *         )
+     *         description="Logout exitoso"
      *     )
      * )
      */

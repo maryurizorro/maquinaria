@@ -2,15 +2,9 @@
     "openapi": "3.0.0",
     "info": {
         "title": "API de Maquinaria",
-        "description": "Documentación de la API de Mantenimientos y Maquinarias",
+        "description": "Documentación de la API con Laravel y L5-Swagger",
         "version": "1.0.0"
     },
-    "servers": [
-        {
-            "url": "http://127.0.0.1:8000/api",
-            "description": "Servidor local"
-        }
-    ],
     "paths": {
         "/api/register": {
             "post": {
@@ -191,24 +185,7 @@
                 "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
                 "responses": {
                     "200": {
-                        "description": "Logout exitoso",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Logout exitoso"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Logout exitoso"
                     }
                 },
                 "security": [
@@ -2669,6 +2646,13 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     },

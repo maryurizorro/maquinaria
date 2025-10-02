@@ -18,6 +18,8 @@ return [
                 /*
                  * Edit to include full URL in ui for assets
                  */
+                'docs' => storage_path('api-docs'),
+                
                 'use_absolute_path' => env('L5_SWAGGER_USE_ABSOLUTE_PATH', true),
 
                 /*
