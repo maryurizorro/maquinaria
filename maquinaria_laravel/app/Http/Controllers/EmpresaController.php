@@ -5,25 +5,31 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Empresa;
-/**
- * @OA\Tag(
- *     name="Empresas",
- *     description="Endpoints para gestionar empresas"
- * )
- */
+
 class EmpresaController extends Controller
 {
-        /**
-     * @OA\Get(
-     *     path="/api/empresas",
-     *     tags={"Empresas"},
-     *     summary="Listar todas las empresas",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de empresas",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Empresa"))
-     *     )
-     * )
+    /**
+     * @group Empresas
+     * 
+     * Listar todas las empresas
+     * 
+     * Retorna una lista completa de empresas junto con sus representantes.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *      {
+     *         "id": 1,
+     *         "nombre": "Constructora XYZ",
+     *         "nit": "900123456-7",
+     *         "direccion": "Calle 123 #45-67",
+     *         "telefono": "3001234567",
+     *         "email": "contacto@xyz.com",
+     *         "created_at": "2025-10-06T15:00:00Z",
+     *         "updated_at": "2025-10-06T15:00:00Z"
+     *      }
+     *   ]
+     * }
      */
     public function index()
     {
@@ -34,32 +40,40 @@ class EmpresaController extends Controller
             'data' => $empresas
         ]);
     }
-  /**
-     * @OA\Post(
-     *     path="/api/empresas",
-     *     tags={"Empresas"},
-     *     summary="Crear una nueva empresa",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"nombre","nit","direccion","telefono","email"},
-     *             @OA\Property(property="nombre", type="string", example="Constructora XYZ"),
-     *             @OA\Property(property="nit", type="string", example="900123456-7"),
-     *             @OA\Property(property="direccion", type="string", example="Calle 123 #45-67"),
-     *             @OA\Property(property="telefono", type="string", example="3001234567"),
-     *             @OA\Property(property="email", type="string", format="email", example="contacto@xyz.com")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Empresa creada exitosamente",
-     *         @OA\JsonContent(ref="#/components/schemas/Empresa")
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Error de validación"
-     *     )
-     * )
+
+    /**
+     * @group Empresas
+     * 
+     * Crear una nueva empresa
+     * 
+     * Crea una empresa con la información proporcionada.
+     * 
+     * @bodyParam nombre string required Nombre de la empresa. Example: Constructora XYZ
+     * @bodyParam nit string required Número de identificación tributaria único. Example: 900123456-7
+     * @bodyParam direccion string required Dirección principal. Example: Calle 123 #45-67
+     * @bodyParam telefono string required Teléfono de contacto. Example: 3001234567
+     * @bodyParam email string required Correo electrónico. Example: contacto@xyz.com
+     * 
+     * @response 201 {
+     *   "status": true,
+     *   "message": "Empresa creada exitosamente",
+     *   "data": {
+     *       "id": 1,
+     *       "nombre": "Constructora XYZ",
+     *       "nit": "900123456-7",
+     *       "direccion": "Calle 123 #45-67",
+     *       "telefono": "3001234567",
+     *       "email": "contacto@xyz.com"
+     *   }
+     * }
+     * 
+     * @response 422 {
+     *   "status": false,
+     *   "message": "Error de validación",
+     *   "errors": {
+     *       "email": ["El campo email ya está en uso."]
+     *   }
+     * }
      */
     public function store(Request $request)
     {
@@ -69,6 +83,7 @@ class EmpresaController extends Controller
             'direccion' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
             'email' => 'required|email|unique:empresas|max:255',
+            'ciudad' => 'required|string|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -87,28 +102,32 @@ class EmpresaController extends Controller
             'data' => $empresa
         ], 201);
     }
+
     /**
-     * @OA\Get(
-     *     path="/api/empresas/{id}",
-     *     tags={"Empresas"},
-     *     summary="Obtener una empresa por ID",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la empresa",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Empresa encontrada",
-     *         @OA\JsonContent(ref="#/components/schemas/Empresa")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Empresa no encontrada"
-     *     )
-     * )
+     * @group Empresas
+     * 
+     * Obtener una empresa por ID
+     * 
+     * Devuelve los datos de una empresa específica, junto con sus representantes y solicitudes.
+     * 
+     * @urlParam id integer required ID de la empresa. Example: 1
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *       "id": 1,
+     *       "nombre": "Constructora XYZ",
+     *       "nit": "900123456-7",
+     *       "direccion": "Calle 123 #45-67",
+     *       "telefono": "3001234567",
+     *       "email": "contacto@xyz.com"
+     *   }
+     * }
+     * 
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Empresa no encontrada"
+     * }
      */
     public function show($id)
     {
@@ -126,38 +145,35 @@ class EmpresaController extends Controller
             'data' => $empresa
         ]);
     }
+
     /**
-     * @OA\Put(
-     *     path="/api/empresas/{id}",
-     *     tags={"Empresas"},
-     *     summary="Actualizar una empresa existente",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la empresa",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=false,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="nombre", type="string", example="Constructora ABC"),
-     *             @OA\Property(property="nit", type="string", example="900987654-3"),
-     *             @OA\Property(property="direccion", type="string", example="Carrera 10 #20-30"),
-     *             @OA\Property(property="telefono", type="string", example="3016549870"),
-     *             @OA\Property(property="email", type="string", format="email", example="info@abc.com")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Empresa actualizada exitosamente",
-     *         @OA\JsonContent(ref="#/components/schemas/Empresa")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Empresa no encontrada"
-     *     )
-     * )
+     * @group Empresas
+     * 
+     * Actualizar una empresa existente
+     * 
+     * Permite actualizar los datos de una empresa ya registrada.
+     * 
+     * @urlParam id integer required ID de la empresa. Example: 1
+     * @bodyParam nombre string Nombre de la empresa. Example: Constructora ABC
+     * @bodyParam nit string Número tributario. Example: 900987654-3
+     * @bodyParam direccion string Dirección. Example: Carrera 10 #20-30
+     * @bodyParam telefono string Teléfono. Example: 3016549870
+     * @bodyParam email string Correo electrónico. Example: info@abc.com
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Empresa actualizada exitosamente",
+     *   "data": {
+     *       "id": 1,
+     *       "nombre": "Constructora ABC",
+     *       "nit": "900987654-3"
+     *   }
+     * }
+     * 
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Empresa no encontrada"
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -194,27 +210,25 @@ class EmpresaController extends Controller
             'data' => $empresa
         ]);
     }
-/**
-     * @OA\Delete(
-     *     path="/api/empresas/{id}",
-     *     tags={"Empresas"},
-     *     summary="Eliminar una empresa",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la empresa",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Empresa eliminada exitosamente"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Empresa no encontrada"
-     *     )
-     * )
+
+    /**
+     * @group Empresas
+     * 
+     * Eliminar una empresa
+     * 
+     * Elimina una empresa registrada del sistema.
+     * 
+     * @urlParam id integer required ID de la empresa. Example: 1
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Empresa eliminada exitosamente"
+     * }
+     * 
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Empresa no encontrada"
+     * }
      */
     public function destroy($id)
     {

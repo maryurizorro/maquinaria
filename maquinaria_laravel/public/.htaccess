@@ -3,6 +3,10 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    <FilesMatch "\.json$">
+    Require all granted
+</FilesMatch>
+
     RewriteEngine On
 
     # Handle Authorization Header

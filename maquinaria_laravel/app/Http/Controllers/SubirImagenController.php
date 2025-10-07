@@ -9,96 +9,90 @@ use Illuminate\Support\Str;
 
 class SubirImagenController extends Controller
 {
-     /**
-     * @OA\Post(
-     *     path="/api/imagenes/subir",
-     *     summary="Subir una imagen asociada a una solicitud",
-     *     tags={"Imagenes"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 required={"Url_foto","solicitud_id"},
-     *                 @OA\Property(
-     *                     property="Url_foto",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Imagen a subir (jpeg, png, jpg, gif)"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="solicitud_id",
-     *                     type="integer",
-     *                     description="ID de la solicitud asociada",
-     *                     example=1
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Imagen subida exitosamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Imagen subida correctamente"),
-     *             @OA\Property(property="url", type="string", example="/storage/DetalleSolicitud/1/imagen.jpg")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Error de validación"
-     *     )
-     * )
+    /**
+     * Subir una imagen asociada a una solicitud.
+     *
+     * @group Imágenes
+     * 
+     * Este endpoint permite subir una imagen relacionada con una solicitud.
+     * 
+     * @bodyParam Url_foto file required Imagen a subir (formatos permitidos: jpeg, png, jpg, gif). Máximo 2 MB.
+     * @bodyParam solicitud_id integer required ID de la solicitud asociada. Ejemplo: 1.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Imagen subida correctamente",
+     *   "url": "/storage/DetalleSolicitud/1/imagen.jpg"
+     * }
+     * 
+     * @response 422 {
+     *   "status": false,
+     *   "message": "Error de validación",
+     *   "errors": {
+     *     "Url_foto": ["El campo Url_foto es obligatorio."],
+     *     "solicitud_id": ["El campo solicitud_id es obligatorio."]
+     *   }
+     * }
      */
     public function subirImagen(Request $request)
     {
-        // Validar que se haya enviado una imagen
-        $request->validate(([
+        $request->validate([
             'Url_foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'solicitud_id' => 'required|exists:solicituds,id',
-        ]));
+        ]);
 
         $carpeta = "DetalleSolicitud/{$request->solicitud_id}";
+        $path = $request->file('Url_foto')->store($carpeta, 'public');
 
-        $path = $request->file(key: 'Url_foto')->store($carpeta, options: 'public');
-
-        return Storage::url($path);
+        return response()->json([
+            'status' => true,
+            'message' => 'Imagen subida correctamente',
+            'url' => Storage::url($path)
+        ]);
     }
-  /**
-     * @OA\Delete(
-     *     path="/api/imagenes/eliminar",
-     *     summary="Eliminar una imagen por URL",
-     *     tags={"Imagenes"},
-     *     @OA\Parameter(
-     *         name="urlImagen",
-     *         in="query",
-     *         required=true,
-     *         description="URL de la imagen a eliminar (ejemplo: /storage/DetalleSolicitud/1/imagen.jpg)",
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Imagen eliminada correctamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Imagen eliminada exitosamente")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Imagen no encontrada"
-     *     )
-     * )
+
+    /**
+     * Eliminar una imagen por su URL.
+     *
+     * @group Imágenes
+     * 
+     * Permite eliminar una imagen previamente subida a partir de su URL pública.
+     * 
+     * @queryParam urlImagen string required URL de la imagen a eliminar. Ejemplo: /storage/DetalleSolicitud/1/imagen.jpg.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Imagen eliminada exitosamente"
+     * }
+     * 
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Imagen no encontrada"
+     * }
      */
-public function EliminarImagen(?string $urlImagen)
-{
-    if ($urlImagen) {
-        // Extraer la ruta del archivo después de '/storage/'
+    public function EliminarImagen(?string $urlImagen)
+    {
+        if (!$urlImagen) {
+            return response()->json([
+                'status' => false,
+                'message' => 'URL de imagen no proporcionada'
+            ], 422);
+        }
+
+        // Extraer la ruta después de /storage/
         $path = Str::after($urlImagen, '/storage/');
 
         if (Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
+            return response()->json([
+                'status' => true,
+                'message' => 'Imagen eliminada exitosamente'
+            ]);
         }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Imagen no encontrada'
+        ], 404);
     }
-}
 }

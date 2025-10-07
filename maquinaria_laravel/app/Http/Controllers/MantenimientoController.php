@@ -8,25 +8,34 @@ use App\Models\Mantenimiento;
 
 class MantenimientoController extends Controller
 {
-    
     /**
-     * @OA\Get(
-     *     path="/api/mantenimientos",
-     *     summary="Listar todos los mantenimientos",
-     *     tags={"Mantenimientos"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de mantenimientos",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/Mantenimiento")
-     *             )
-     *         )
-     *     )
-     * )
+     * @group Mantenimientos
+     * 
+     * Listar todos los mantenimientos
+     * 
+     * Este endpoint retorna todos los mantenimientos registrados junto con la información del tipo de maquinaria asociado.
+     * 
+     * @response 200 {
+     *  "status": true,
+     *  "data": [
+     *      {
+     *          "id": 1,
+     *          "codigo": "MT-001",
+     *          "nombre": "Cambio de aceite",
+     *          "descripcion": "Mantenimiento preventivo para motor",
+     *          "costo": 150.00,
+     *          "tiempo_estimado": 2,
+     *          "manual_procedimiento": "Revisar aceite SAE 15W40",
+     *          "tipo_maquinaria_id": 1,
+     *          "created_at": "2025-10-06T14:22:00.000000Z",
+     *          "updated_at": "2025-10-06T14:22:00.000000Z",
+     *          "tipo_maquinaria": {
+     *              "id": 1,
+     *              "nombre": "Excavadora"
+     *          }
+     *      }
+     *  ]
+     * }
      */
     public function index()
     {
@@ -39,20 +48,32 @@ class MantenimientoController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/mantenimientos",
-     *     summary="Crear un mantenimiento",
-     *     tags={"Mantenimientos"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Mantenimiento creado exitosamente",
-     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
-     *     )
-     * )
+     * @group Mantenimientos
+     * 
+     * Crear un nuevo mantenimiento
+     * 
+     * Este endpoint permite registrar un nuevo mantenimiento en el sistema.
+     * 
+     * @bodyParam codigo string required Código único del mantenimiento. Example: MT-001
+     * @bodyParam nombre string required Nombre del mantenimiento. Example: Cambio de aceite
+     * @bodyParam descripcion string required Descripción detallada. Example: Mantenimiento preventivo de motor
+     * @bodyParam costo numeric required Costo estimado del mantenimiento. Example: 150.50
+     * @bodyParam tiempo_estimado numeric Tiempo estimado en horas. Example: 2
+     * @bodyParam manual_procedimiento string Manual o descripción del procedimiento. Example: Revisar filtro y nivel de aceite
+     * @bodyParam tipo_maquinaria_id integer required ID del tipo de maquinaria asociada. Example: 1
+     * 
+     * @response 201 {
+     *  "status": true,
+     *  "message": "Mantenimiento creado exitosamente",
+     *  "data": {
+     *      "id": 1,
+     *      "codigo": "MT-001",
+     *      "nombre": "Cambio de aceite",
+     *      "descripcion": "Mantenimiento preventivo de motor",
+     *      "costo": 150.50,
+     *      "tipo_maquinaria_id": 1
+     *  }
+     * }
      */
     public function store(Request $request)
     {
@@ -82,25 +103,31 @@ class MantenimientoController extends Controller
             'data' => $mantenimiento->load('tipoMaquinaria')
         ], 201);
     }
- /**
-     * @OA\Get(
-     *     path="/api/mantenimientos/{id}",
-     *     summary="Obtener un mantenimiento por ID",
-     *     tags={"Mantenimientos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del mantenimiento",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Mantenimiento encontrado",
-     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
-     *     ),
-     *     @OA\Response(response=404, description="Mantenimiento no encontrado")
-     * )
+
+    /**
+     * @group Mantenimientos
+     * 
+     * Mostrar un mantenimiento por ID
+     * 
+     * Este endpoint devuelve la información de un mantenimiento específico.
+     * 
+     * @urlParam id integer required ID del mantenimiento. Example: 1
+     * 
+     * @response 200 {
+     *  "status": true,
+     *  "data": {
+     *      "id": 1,
+     *      "codigo": "MT-001",
+     *      "nombre": "Cambio de aceite",
+     *      "descripcion": "Mantenimiento preventivo de motor",
+     *      "costo": 150.00
+     *  }
+     * }
+     * 
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Mantenimiento no encontrado"
+     * }
      */
     public function show($id)
     {
@@ -118,29 +145,30 @@ class MantenimientoController extends Controller
             'data' => $mantenimiento
         ]);
     }
+
     /**
-     * @OA\Put(
-     *     path="/api/mantenimientos/{id}",
-     *     summary="Actualizar un mantenimiento",
-     *     tags={"Mantenimientos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del mantenimiento a actualizar",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Mantenimiento actualizado exitosamente",
-     *         @OA\JsonContent(ref="#/components/schemas/Mantenimiento")
-     *     ),
-     *     @OA\Response(response=404, description="Mantenimiento no encontrado")
-     * )
+     * @group Mantenimientos
+     * 
+     * Actualizar un mantenimiento existente
+     * 
+     * Este endpoint permite modificar los datos de un mantenimiento.
+     * 
+     * @urlParam id integer required ID del mantenimiento a actualizar. Example: 1
+     * @bodyParam codigo string Código del mantenimiento. Example: MT-001
+     * @bodyParam nombre string Nombre del mantenimiento. Example: Cambio de aceite
+     * @bodyParam descripcion string Descripción detallada. Example: Mantenimiento preventivo
+     * @bodyParam costo numeric Costo del mantenimiento. Example: 180.00
+     * @bodyParam tipo_maquinaria_id integer ID del tipo de maquinaria asociada. Example: 1
+     * 
+     * @response 200 {
+     *  "status": true,
+     *  "message": "Mantenimiento actualizado exitosamente",
+     *  "data": {
+     *      "id": 1,
+     *      "codigo": "MT-001",
+     *      "nombre": "Cambio de aceite actualizado"
+     *  }
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -168,22 +196,7 @@ class MantenimientoController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-         /**
-     * @OA\Delete(
-     *     path="/api/mantenimientos/{id}",
-     *     summary="Eliminar un mantenimiento",
-     *     tags={"Mantenimientos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del mantenimiento a eliminar",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Mantenimiento eliminado exitosamente"),
-     *     @OA\Response(response=404, description="Mantenimiento no encontrado")
-     * )
-     */
+
         $mantenimiento->update($request->all());
 
         return response()->json([
@@ -193,6 +206,25 @@ class MantenimientoController extends Controller
         ]);
     }
 
+    /**
+     * @group Mantenimientos
+     * 
+     * Eliminar un mantenimiento
+     * 
+     * Este endpoint elimina un mantenimiento según su ID.
+     * 
+     * @urlParam id integer required ID del mantenimiento a eliminar. Example: 1
+     * 
+     * @response 200 {
+     *  "status": true,
+     *  "message": "Mantenimiento eliminado exitosamente"
+     * }
+     * 
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Mantenimiento no encontrado"
+     * }
+     */
     public function destroy($id)
     {
         $mantenimiento = Mantenimiento::find($id);

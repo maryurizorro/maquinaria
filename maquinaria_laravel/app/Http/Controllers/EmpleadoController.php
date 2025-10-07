@@ -5,45 +5,76 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Empleado;
-   /**
-     * @OA\Get(
-     *     path="/api/empleados",
-     *     summary="Listar empleados",
-     *     tags={"Empleados"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de empleados con solicitudes",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Empleado"))
-     *     )
-     * )
-     */
+
 class EmpleadoController extends Controller
 {
+    /**
+     * Listar empleados
+     *
+     * Devuelve la lista completa de empleados junto con sus solicitudes asociadas.
+     *
+     * @group Empleados
+     * @response 200 {
+     *  "status": true,
+     *  "data": [
+     *      {
+     *          "id": 1,
+     *          "nombre": "Juan",
+     *          "apellido": "Pérez",
+     *          "documento": "12345678",
+     *          "email": "juan.perez@example.com",
+     *          "direccion": "Calle 10 #23-45",
+     *          "telefono": "3104567890",
+     *          "rol": "empleado",
+     *          "solicitudes": []
+     *      }
+     *  ]
+     * }
+     */
     public function index()
     {
         $empleados = Empleado::with('solicitudes')->get();
-        
+
         return response()->json([
             'status' => true,
             'data' => $empleados
         ]);
     }
-   /**
-     * @OA\Post(
-     *     path="/api/empleados",
-     *     summary="Crear un nuevo empleado",
-     *     tags={"Empleados"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Empleado")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Empleado creado exitosamente",
-     *         @OA\JsonContent(ref="#/components/schemas/Empleado")
-     *     ),
-     *     @OA\Response(response=422, description="Error de validación")
-     * )
+
+    /**
+     * Crear un nuevo empleado
+     *
+     * Crea un nuevo registro de empleado con todos sus datos básicos.
+     *
+     * @group Empleados
+     * @bodyParam nombre string required Nombre del empleado. Example: Juan
+     * @bodyParam apellido string required Apellido del empleado. Example: Pérez
+     * @bodyParam documento string required Documento único del empleado. Example: 12345678
+     * @bodyParam email string required Correo electrónico único del empleado. Example: juan.perez@example.com
+     * @bodyParam direccion string required Dirección del empleado. Example: Calle 10 #23-45
+     * @bodyParam telefono string required Teléfono del empleado. Example: 3104567890
+     * @bodyParam rol string Rol del empleado (admin, empleado, supervisor). Example: empleado
+     * @response 201 {
+     *  "status": true,
+     *  "message": "Empleado creado exitosamente",
+     *  "data": {
+     *      "id": 5,
+     *      "nombre": "Juan",
+     *      "apellido": "Pérez",
+     *      "documento": "12345678",
+     *      "email": "juan.perez@example.com",
+     *      "direccion": "Calle 10 #23-45",
+     *      "telefono": "3104567890",
+     *      "rol": "empleado"
+     *  }
+     * }
+     * @response 422 {
+     *  "status": false,
+     *  "message": "Error de validación",
+     *  "errors": {
+     *      "email": ["El campo email ya ha sido registrado."]
+     *  }
+     * }
      */
     public function store(Request $request)
     {
@@ -73,22 +104,32 @@ class EmpleadoController extends Controller
             'data' => $empleado
         ], 201);
     }
- 
+
     /**
-     * @OA\Get(
-     *     path="/api/empleados/{id}",
-     *     summary="Obtener un empleado por ID",
-     *     tags={"Empleados"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del empleado",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Empleado encontrado", @OA\JsonContent(ref="#/components/schemas/Empleado")),
-     *     @OA\Response(response=404, description="Empleado no encontrado")
-     * )
+     * Mostrar un empleado
+     *
+     * Obtiene la información de un empleado por su ID junto con sus solicitudes.
+     *
+     * @group Empleados
+     * @urlParam id integer required ID del empleado. Example: 2
+     * @response 200 {
+     *  "status": true,
+     *  "data": {
+     *      "id": 2,
+     *      "nombre": "Ana",
+     *      "apellido": "Gómez",
+     *      "documento": "98765432",
+     *      "email": "ana.gomez@example.com",
+     *      "direccion": "Carrera 15 #45-12",
+     *      "telefono": "3204567890",
+     *      "rol": "supervisor",
+     *      "solicitudes": []
+     *  }
+     * }
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Empleado no encontrado"
+     * }
      */
     public function show($id)
     {
@@ -106,26 +147,35 @@ class EmpleadoController extends Controller
             'data' => $empleado
         ]);
     }
+
     /**
-     * @OA\Put(
-     *     path="/api/empleados/{id}",
-     *     summary="Actualizar un empleado",
-     *     tags={"Empleados"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del empleado",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Empleado")
-     *     ),
-     *     @OA\Response(response=200, description="Empleado actualizado exitosamente", @OA\JsonContent(ref="#/components/schemas/Empleado")),
-     *     @OA\Response(response=404, description="Empleado no encontrado"),
-     *     @OA\Response(response=422, description="Error de validación")
-     * )
+     * Actualizar un empleado
+     *
+     * Modifica la información de un empleado existente.
+     *
+     * @group Empleados
+     * @urlParam id integer required ID del empleado. Example: 3
+     * @bodyParam nombre string Nombre del empleado. Example: Carlos
+     * @bodyParam apellido string Apellido del empleado. Example: Ramírez
+     * @bodyParam documento string Documento del empleado. Example: 11223344
+     * @bodyParam email string Correo electrónico. Example: carlos.ramirez@example.com
+     * @bodyParam direccion string Dirección. Example: Calle 45 #23-10
+     * @bodyParam telefono string Teléfono. Example: 3115678901
+     * @bodyParam rol string Rol (admin, empleado, supervisor). Example: supervisor
+     * @response 200 {
+     *  "status": true,
+     *  "message": "Empleado actualizado exitosamente",
+     *  "data": {
+     *      "id": 3,
+     *      "nombre": "Carlos",
+     *      "apellido": "Ramírez",
+     *      "email": "carlos.ramirez@example.com"
+     *  }
+     * }
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Empleado no encontrado"
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -164,21 +214,22 @@ class EmpleadoController extends Controller
             'data' => $empleado
         ]);
     }
+
     /**
-     * @OA\Delete(
-     *     path="/api/empleados/{id}",
-     *     summary="Eliminar un empleado",
-     *     tags={"Empleados"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del empleado",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Empleado eliminado exitosamente"),
-     *     @OA\Response(response=404, description="Empleado no encontrado")
-     * )
+     * Eliminar un empleado
+     *
+     * Elimina un registro de empleado del sistema.
+     *
+     * @group Empleados
+     * @urlParam id integer required ID del empleado. Example: 4
+     * @response 200 {
+     *  "status": true,
+     *  "message": "Empleado eliminado exitosamente"
+     * }
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Empleado no encontrado"
+     * }
      */
     public function destroy($id)
     {

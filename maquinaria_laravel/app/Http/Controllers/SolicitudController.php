@@ -8,18 +8,43 @@ use App\Models\Solicitud;
 
 class SolicitudController extends Controller
 {
-      /**
-     * @OA\Get(
-     *     path="/api/solicitudes",
-     *     summary="Listar todas las solicitudes",
-     *     tags={"Solicitudes"},
-     *     @OA\Response(response=200, description="Lista de solicitudes")
-     * )
+    /**
+     * @group Solicitudes
+     * 
+     * Listar todas las solicitudes
+     * 
+     * Muestra un listado completo de las solicitudes registradas con sus relaciones.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *      {
+     *        "id": 1,
+     *        "codigo": "SOL-2025-001",
+     *        "fecha_solicitud": "2025-09-30",
+     *        "estado": "pendiente",
+     *        "empresa": {
+     *           "id": 1,
+     *           "nombre": "Maquinarias S.A."
+     *        },
+     *        "detalles_solicitud": [
+     *           {
+     *             "id": 1,
+     *             "mantenimiento": {
+     *                "id": 2,
+     *                "nombre": "Cambio de aceite"
+     *             }
+     *           }
+     *        ],
+     *        "empleados": []
+     *      }
+     *   ]
+     * }
      */
     public function index()
     {
         $solicitudes = Solicitud::with('empresa', 'detallesSolicitud.mantenimiento', 'empleados')->get();
-        
+
         return response()->json([
             'status' => true,
             'data' => $solicitudes
@@ -27,26 +52,39 @@ class SolicitudController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/solicitudes",
-     *     summary="Crear una nueva solicitud",
-     *     tags={"Solicitudes"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"codigo","fecha_solicitud","empresa_id"},
-     *             @OA\Property(property="codigo", type="string", example="SOL-2025-001"),
-     *             @OA\Property(property="fecha_solicitud", type="string", format="date", example="2025-09-30"),
-     *             @OA\Property(property="estado", type="string", example="pendiente"),
-     *             @OA\Property(property="observaciones", type="string", example="Revisión de maquinaria pesada"),
-     *             @OA\Property(property="descripcion_solicitud", type="string", example="Solicitud de mantenimiento de excavadora"),
-     *             @OA\Property(property="fecha_deseada", type="string", format="date", example="2025-10-15"),
-     *             @OA\Property(property="empresa_id", type="integer", example=1)
-     *         )
-     *     ),
-     *     @OA\Response(response=201, description="Solicitud creada exitosamente"),
-     *     @OA\Response(response=422, description="Error de validación")
-     * )
+     * @group Solicitudes
+     * 
+     * Crear una nueva solicitud
+     * 
+     * Registra una nueva solicitud de mantenimiento en el sistema.
+     * 
+     * @bodyParam codigo string required Código único de la solicitud. Example: SOL-2025-001
+     * @bodyParam fecha_solicitud date required Fecha en la que se realiza la solicitud. Example: 2025-09-30
+     * @bodyParam estado string Estado actual de la solicitud (pendiente, en_proceso, completada, cancelada). Example: pendiente
+     * @bodyParam observaciones string Observaciones adicionales. Example: Revisión de maquinaria pesada
+     * @bodyParam descripcion_solicitud string Descripción detallada de la solicitud. Example: Solicitud de mantenimiento de excavadora
+     * @bodyParam fecha_deseada date Fecha deseada para realizar el mantenimiento. Example: 2025-10-15
+     * @bodyParam empresa_id integer required ID de la empresa que realiza la solicitud. Example: 1
+     * 
+     * @response 201 {
+     *   "status": true,
+     *   "message": "Solicitud creada exitosamente",
+     *   "data": {
+     *      "id": 1,
+     *      "codigo": "SOL-2025-001",
+     *      "empresa": {
+     *         "id": 1,
+     *         "nombre": "Maquinarias S.A."
+     *      }
+     *   }
+     * }
+     * @response 422 {
+     *   "status": false,
+     *   "message": "Error de validación",
+     *   "errors": {
+     *      "codigo": ["El campo código es obligatorio."]
+     *   }
+     * }
      */
     public function store(Request $request)
     {
@@ -76,21 +114,41 @@ class SolicitudController extends Controller
             'data' => $solicitud->load('empresa')
         ], 201);
     }
+
     /**
-     * @OA\Get(
-     *     path="/api/solicitudes/{id}",
-     *     summary="Obtener una solicitud",
-     *     tags={"Solicitudes"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         description="ID de la solicitud",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Response(response=200, description="Solicitud encontrada"),
-     *     @OA\Response(response=404, description="Solicitud no encontrada")
-     * )
+     * @group Solicitudes
+     * 
+     * Mostrar una solicitud específica
+     * 
+     * Muestra los datos detallados de una solicitud, incluyendo su empresa, empleados y mantenimientos.
+     * 
+     * @urlParam id integer required ID de la solicitud. Example: 1
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *     "id": 1,
+     *     "codigo": "SOL-2025-001",
+     *     "empresa": {
+     *       "id": 1,
+     *       "nombre": "Maquinarias S.A."
+     *     },
+     *     "detallesSolicitud": [
+     *       {
+     *         "id": 1,
+     *         "mantenimiento": {
+     *           "id": 2,
+     *           "nombre": "Cambio de aceite"
+     *         }
+     *       }
+     *     ],
+     *     "empleados": []
+     *   }
+     * }
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Solicitud no encontrada"
+     * }
      */
     public function show($id)
     {
@@ -108,33 +166,39 @@ class SolicitudController extends Controller
             'data' => $solicitud
         ]);
     }
+
     /**
-     * @OA\Put(
-     *     path="/api/solicitudes/{id}",
-     *     summary="Actualizar una solicitud",
-     *     tags={"Solicitudes"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         description="ID de la solicitud",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\RequestBody(
-     *         required=false,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="codigo", type="string", example="SOL-2025-002"),
-     *             @OA\Property(property="fecha_solicitud", type="string", format="date", example="2025-09-28"),
-     *             @OA\Property(property="estado", type="string", example="en_proceso"),
-     *             @OA\Property(property="observaciones", type="string", example="Se requiere repuesto urgente"),
-     *             @OA\Property(property="descripcion_solicitud", type="string", example="Solicitud de mantenimiento de cargador frontal"),
-     *             @OA\Property(property="fecha_deseada", type="string", format="date", example="2025-10-20"),
-     *             @OA\Property(property="empresa_id", type="integer", example=2)
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Solicitud actualizada exitosamente"),
-     *     @OA\Response(response=404, description="Solicitud no encontrada")
-     * )
+     * @group Solicitudes
+     * 
+     * Actualizar una solicitud
+     * 
+     * Permite modificar los datos de una solicitud existente.
+     * 
+     * @urlParam id integer required ID de la solicitud a actualizar. Example: 1
+     * @bodyParam codigo string Código único de la solicitud. Example: SOL-2025-002
+     * @bodyParam fecha_solicitud date Fecha en la que se realiza la solicitud. Example: 2025-09-28
+     * @bodyParam estado string Estado de la solicitud (pendiente, en_proceso, completada, cancelada). Example: en_proceso
+     * @bodyParam observaciones string Observaciones adicionales. Example: Se requiere repuesto urgente
+     * @bodyParam descripcion_solicitud string Descripción detallada. Example: Solicitud de mantenimiento de cargador frontal
+     * @bodyParam fecha_deseada date Fecha deseada para el mantenimiento. Example: 2025-10-20
+     * @bodyParam empresa_id integer ID de la empresa. Example: 2
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Solicitud actualizada exitosamente",
+     *   "data": {
+     *     "id": 1,
+     *     "codigo": "SOL-2025-002",
+     *     "empresa": {
+     *       "id": 2,
+     *       "nombre": "Construcciones del Norte"
+     *     }
+     *   }
+     * }
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Solicitud no encontrada"
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -173,21 +237,24 @@ class SolicitudController extends Controller
             'data' => $solicitud->load('empresa')
         ]);
     }
+
     /**
-     * @OA\Delete(
-     *     path="/api/solicitudes/{id}",
-     *     summary="Eliminar una solicitud",
-     *     tags={"Solicitudes"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         description="ID de la solicitud",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Response(response=200, description="Solicitud eliminada exitosamente"),
-     *     @OA\Response(response=404, description="Solicitud no encontrada")
-     * )
+     * @group Solicitudes
+     * 
+     * Eliminar una solicitud
+     * 
+     * Elimina una solicitud del sistema de manera permanente.
+     * 
+     * @urlParam id integer required ID de la solicitud a eliminar. Example: 1
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Solicitud eliminada exitosamente"
+     * }
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Solicitud no encontrada"
+     * }
      */
     public function destroy($id)
     {

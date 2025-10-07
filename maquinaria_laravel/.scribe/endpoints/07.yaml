@@ -1,0 +1,527 @@
+name: Solicitudes
+description: ''
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/solicitudes
+    metadata:
+      groupName: Solicitudes
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Listar todas las solicitudes
+
+        Muestra un listado completo de las solicitudes registradas con sus relaciones.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": [
+               {
+                 "id": 1,
+                 "codigo": "SOL-2025-001",
+                 "fecha_solicitud": "2025-09-30",
+                 "estado": "pendiente",
+                 "empresa": {
+                    "id": 1,
+                    "nombre": "Maquinarias S.A."
+                 },
+                 "detalles_solicitud": [
+                    {
+                      "id": 1,
+                      "mantenimiento": {
+                         "id": 2,
+                         "nombre": "Cambio de aceite"
+                      }
+                    }
+                 ],
+                 "empleados": []
+               }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/solicitudes
+    metadata:
+      groupName: Solicitudes
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Crear una nueva solicitud
+
+        Registra una nueva solicitud de mantenimiento en el sistema.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      codigo:
+        name: codigo
+        description: 'Código único de la solicitud.'
+        required: true
+        example: SOL-2025-001
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      fecha_solicitud:
+        name: fecha_solicitud
+        description: 'Fecha en la que se realiza la solicitud.'
+        required: true
+        example: '2025-09-30'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      estado:
+        name: estado
+        description: 'Estado actual de la solicitud (pendiente, en_proceso, completada, cancelada).'
+        required: false
+        example: pendiente
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      observaciones:
+        name: observaciones
+        description: 'Observaciones adicionales.'
+        required: false
+        example: 'Revisión de maquinaria pesada'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      fecha_deseada:
+        name: fecha_deseada
+        description: 'Fecha deseada para realizar el mantenimiento.'
+        required: false
+        example: '2025-10-15'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      descripcion_solicitud:
+        name: descripcion_solicitud
+        description: 'Descripción detallada de la solicitud.'
+        required: false
+        example: 'Solicitud de mantenimiento de excavadora'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      empresa_id:
+        name: empresa_id
+        description: 'ID de la empresa que realiza la solicitud.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      codigo: SOL-2025-001
+      fecha_solicitud: '2025-09-30'
+      estado: pendiente
+      observaciones: 'Revisión de maquinaria pesada'
+      fecha_deseada: '2025-10-15'
+      descripcion_solicitud: 'Solicitud de mantenimiento de excavadora'
+      empresa_id: 1
+    fileParameters: []
+    responses:
+      -
+        status: 201
+        content: |-
+          {
+            "status": true,
+            "message": "Solicitud creada exitosamente",
+            "data": {
+               "id": 1,
+               "codigo": "SOL-2025-001",
+               "empresa": {
+                  "id": 1,
+                  "nombre": "Maquinarias S.A."
+               }
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "status": false,
+            "message": "Error de validación",
+            "errors": {
+               "codigo": ["El campo código es obligatorio."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/solicitudes/{id}'
+    metadata:
+      groupName: Solicitudes
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Mostrar una solicitud específica
+
+        Muestra los datos detallados de una solicitud, incluyendo su empresa, empleados y mantenimientos.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'ID de la solicitud.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": {
+              "id": 1,
+              "codigo": "SOL-2025-001",
+              "empresa": {
+                "id": 1,
+                "nombre": "Maquinarias S.A."
+              },
+              "detallesSolicitud": [
+                {
+                  "id": 1,
+                  "mantenimiento": {
+                    "id": 2,
+                    "nombre": "Cambio de aceite"
+                  }
+                }
+              ],
+              "empleados": []
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "status": false,
+            "message": "Solicitud no encontrada"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - PUT
+    uri: 'api/solicitudes/{id}'
+    metadata:
+      groupName: Solicitudes
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Actualizar una solicitud
+
+        Permite modificar los datos de una solicitud existente.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'ID de la solicitud a actualizar.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      codigo:
+        name: codigo
+        description: 'Código único de la solicitud.'
+        required: false
+        example: SOL-2025-002
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      fecha_solicitud:
+        name: fecha_solicitud
+        description: 'Fecha en la que se realiza la solicitud.'
+        required: false
+        example: '2025-09-28'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      estado:
+        name: estado
+        description: 'Estado de la solicitud (pendiente, en_proceso, completada, cancelada).'
+        required: false
+        example: en_proceso
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      observaciones:
+        name: observaciones
+        description: 'Observaciones adicionales.'
+        required: false
+        example: 'Se requiere repuesto urgente'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      descripcion_solicitud:
+        name: descripcion_solicitud
+        description: 'Descripción detallada.'
+        required: false
+        example: 'Solicitud de mantenimiento de cargador frontal'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      fecha_deseada:
+        name: fecha_deseada
+        description: 'Fecha deseada para el mantenimiento.'
+        required: false
+        example: '2025-10-20'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      empresa_id:
+        name: empresa_id
+        description: 'ID de la empresa.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      codigo: SOL-2025-002
+      fecha_solicitud: '2025-09-28'
+      estado: en_proceso
+      observaciones: 'Se requiere repuesto urgente'
+      descripcion_solicitud: 'Solicitud de mantenimiento de cargador frontal'
+      fecha_deseada: '2025-10-20'
+      empresa_id: 2
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "message": "Solicitud actualizada exitosamente",
+            "data": {
+              "id": 1,
+              "codigo": "SOL-2025-002",
+              "empresa": {
+                "id": 2,
+                "nombre": "Construcciones del Norte"
+              }
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "status": false,
+            "message": "Solicitud no encontrada"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: 'api/solicitudes/{id}'
+    metadata:
+      groupName: Solicitudes
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Eliminar una solicitud
+
+        Elimina una solicitud del sistema de manera permanente.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'ID de la solicitud a eliminar.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "message": "Solicitud eliminada exitosamente"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "status": false,
+            "message": "Solicitud no encontrada"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []

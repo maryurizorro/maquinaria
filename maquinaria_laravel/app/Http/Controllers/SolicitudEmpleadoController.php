@@ -8,56 +8,84 @@ use App\Models\SolicitudEmpleado;
 
 class SolicitudEmpleadoController extends Controller
 {
-        /**
-     * @OA\Get(
-     *     path="/api/solicitud-empleados",
-     *     summary="Listar todas las asignaciones de empleados a solicitudes",
-     *     tags={"SolicitudEmpleado"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de asignaciones",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="data", type="array",
-     *                 @OA\Items(ref="#/components/schemas/SolicitudEmpleado")
-     *             )
-     *         )
-     *     )
-     * )
+    /**
+     * @group SolicitudEmpleado
+     * 
+     * Listar todas las asignaciones de empleados a solicitudes
+     * 
+     * Muestra todas las asignaciones de empleados con sus respectivas solicitudes y empresas.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "solicitud": {
+     *         "id": 3,
+     *         "codigo": "SOL-2025-002",
+     *         "empresa": {
+     *           "id": 1,
+     *           "nombre": "Maquinarias S.A."
+     *         }
+     *       },
+     *       "empleado": {
+     *         "id": 5,
+     *         "nombre": "Carlos Gómez"
+     *       },
+     *       "estado": "asignado"
+     *     }
+     *   ]
+     * }
      */
     public function index()
     {
         $solicitudEmpleados = SolicitudEmpleado::with('solicitud.empresa', 'empleado')->get();
-        
+
         return response()->json([
             'status' => true,
             'data' => $solicitudEmpleados
         ]);
     }
+
     /**
-     * @OA\Post(
-     *     path="/api/solicitud-empleados",
-     *     summary="Asignar un empleado a una solicitud",
-     *     tags={"SolicitudEmpleado"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"solicitud_id","empleado_id"},
-     *             @OA\Property(property="solicitud_id", type="integer", example=1),
-     *             @OA\Property(property="empleado_id", type="integer", example=2),
-     *             @OA\Property(property="estado", type="string", enum={"asignado","en_proceso","completado"}, example="asignado")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Empleado asignado correctamente",
-     *         @OA\JsonContent(ref="#/components/schemas/SolicitudEmpleado")
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Error de validación"
-     *     )
-     * )
+     * @group SolicitudEmpleado
+     * 
+     * Asignar un empleado a una solicitud
+     * 
+     * Crea una nueva asignación entre un empleado y una solicitud.
+     * 
+     * @bodyParam solicitud_id integer required ID de la solicitud. Example: 1
+     * @bodyParam empleado_id integer required ID del empleado. Example: 2
+     * @bodyParam estado string Estado de la asignación (asignado, en_proceso, completado). Example: asignado
+     * 
+     * @response 201 {
+     *   "status": true,
+     *   "message": "Empleado asignado a solicitud exitosamente",
+     *   "data": {
+     *      "id": 1,
+     *      "solicitud": {
+     *         "id": 3,
+     *         "codigo": "SOL-2025-002",
+     *         "empresa": {
+     *            "id": 1,
+     *            "nombre": "Maquinarias S.A."
+     *         }
+     *      },
+     *      "empleado": {
+     *         "id": 2,
+     *         "nombre": "Carlos Gómez"
+     *      },
+     *      "estado": "asignado"
+     *   }
+     * }
+     * 
+     * @response 422 {
+     *   "status": false,
+     *   "message": "Error de validación",
+     *   "errors": {
+     *     "empleado_id": ["El campo empleado_id es obligatorio."]
+     *   }
+     * }
      */
     public function store(Request $request)
     {
@@ -95,28 +123,40 @@ class SolicitudEmpleadoController extends Controller
             'data' => $solicitudEmpleado->load('solicitud.empresa', 'empleado')
         ], 201);
     }
+
     /**
-     * @OA\Get(
-     *     path="/api/solicitud-empleados/{id}",
-     *     summary="Obtener una asignación por ID",
-     *     tags={"SolicitudEmpleado"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la asignación",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Asignación encontrada",
-     *         @OA\JsonContent(ref="#/components/schemas/SolicitudEmpleado")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Asignación no encontrada"
-     *     )
-     * )
+     * @group SolicitudEmpleado
+     * 
+     * Obtener una asignación por ID
+     * 
+     * Muestra la información de una asignación específica de empleado a solicitud.
+     * 
+     * @urlParam id integer required ID de la asignación. Example: 1
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *      "id": 1,
+     *      "solicitud": {
+     *         "id": 3,
+     *         "codigo": "SOL-2025-002",
+     *         "empresa": {
+     *            "id": 1,
+     *            "nombre": "Maquinarias S.A."
+     *         }
+     *      },
+     *      "empleado": {
+     *         "id": 2,
+     *         "nombre": "Carlos Gómez"
+     *      },
+     *      "estado": "en_proceso"
+     *   }
+     * }
+     * 
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Asignación no encontrada"
+     * }
      */
     public function show($id)
     {
@@ -134,34 +174,40 @@ class SolicitudEmpleadoController extends Controller
             'data' => $solicitudEmpleado
         ]);
     }
-  /**
-     * @OA\Put(
-     *     path="/api/solicitud-empleados/{id}",
-     *     summary="Actualizar una asignación",
-     *     tags={"SolicitudEmpleado"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la asignación",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\RequestBody(
-     *         required=false,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="estado", type="string", enum={"asignado","en_proceso","completado"}, example="en_proceso")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Asignación actualizada correctamente",
-     *         @OA\JsonContent(ref="#/components/schemas/SolicitudEmpleado")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Asignación no encontrada"
-     *     )
-     * )
+
+    /**
+     * @group SolicitudEmpleado
+     * 
+     * Actualizar una asignación
+     * 
+     * Modifica los datos de una asignación existente (por ejemplo, cambiar el estado).
+     * 
+     * @urlParam id integer required ID de la asignación. Example: 1
+     * @bodyParam solicitud_id integer ID de la solicitud. Example: 1
+     * @bodyParam empleado_id integer ID del empleado. Example: 2
+     * @bodyParam estado string Estado de la asignación (asignado, en_proceso, completado). Example: completado
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Asignación actualizada exitosamente",
+     *   "data": {
+     *      "id": 1,
+     *      "estado": "completado",
+     *      "solicitud": {
+     *         "id": 3,
+     *         "codigo": "SOL-2025-002"
+     *      },
+     *      "empleado": {
+     *         "id": 2,
+     *         "nombre": "Carlos Gómez"
+     *      }
+     *   }
+     * }
+     * 
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Asignación no encontrada"
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -196,27 +242,25 @@ class SolicitudEmpleadoController extends Controller
             'data' => $solicitudEmpleado->load('solicitud.empresa', 'empleado')
         ]);
     }
- /**
-     * @OA\Delete(
-     *     path="/api/solicitud-empleados/{id}",
-     *     summary="Eliminar una asignación",
-     *     tags={"SolicitudEmpleado"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la asignación",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Asignación eliminada correctamente"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Asignación no encontrada"
-     *     )
-     * )
+
+    /**
+     * @group SolicitudEmpleado
+     * 
+     * Eliminar una asignación
+     * 
+     * Elimina una asignación de empleado a solicitud.
+     * 
+     * @urlParam id integer required ID de la asignación a eliminar. Example: 1
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Asignación eliminada exitosamente"
+     * }
+     * 
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Asignación no encontrada"
+     * }
      */
     public function destroy($id)
     {

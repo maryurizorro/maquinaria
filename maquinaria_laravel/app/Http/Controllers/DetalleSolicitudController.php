@@ -7,33 +7,35 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\DetalleSolicitud;
 use App\Models\Mantenimiento;
 
-
 class DetalleSolicitudController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/detalles-solicitud",
-     *     summary="Listar todos los detalles de solicitud",
-     *     tags={"DetalleSolicitud"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de detalles de solicitud",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/DetalleSolicitud")
-     *             )
-     *         )
-     *     )
-     * )
+     * Listar todos los detalles de solicitud
+     *
+     * Obtiene una lista completa de los detalles de solicitud junto con la información
+     * relacionada de la solicitud, empresa y mantenimiento.
+     *
+     * @group DetalleSolicitud
+     * @response 200 {
+     *  "status": true,
+     *  "data": [
+     *      {
+     *          "id": 1,
+     *          "solicitud_id": 1,
+     *          "mantenimiento_id": 2,
+     *          "cantidad_maquinas": 3,
+     *          "costo_total": 45000,
+     *          "Url_foto": "uploads/img1.jpg",
+     *          "solicitud": { "empresa": { "nombre": "Mi Empresa" } },
+     *          "mantenimiento": { "nombre": "Revisión General" }
+     *      }
+     *  ]
+     * }
      */
     public function index()
     {
         $detalles = DetalleSolicitud::with('solicitud.empresa', 'mantenimiento')->get();
-        
+
         return response()->json([
             'status' => true,
             'data' => $detalles
@@ -41,26 +43,28 @@ class DetalleSolicitudController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/detalles-solicitud",
-     *     summary="Crear un detalle de solicitud",
-     *     tags={"DetalleSolicitud"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"solicitud_id","mantenimiento_id","cantidad_maquinas","Url_foto"},
-     *             @OA\Property(property="solicitud_id", type="integer", example=1),
-     *             @OA\Property(property="mantenimiento_id", type="integer", example=2),
-     *             @OA\Property(property="cantidad_maquinas", type="integer", example=3),
-     *             @OA\Property(property="Url_foto", type="string", format="binary")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Detalle de solicitud creado",
-     *         @OA\JsonContent(ref="#/components/schemas/DetalleSolicitud")
-     *     )
-     * )
+     * Crear un nuevo detalle de solicitud
+     *
+     * Registra un nuevo detalle de solicitud con su mantenimiento, cantidad de máquinas
+     * y foto asociada.
+     *
+     * @group DetalleSolicitud
+     * @bodyParam solicitud_id integer required ID de la solicitud. Example: 1
+     * @bodyParam mantenimiento_id integer required ID del mantenimiento. Example: 2
+     * @bodyParam cantidad_maquinas integer required Cantidad de máquinas. Example: 3
+     * @bodyParam Url_foto file required Imagen de evidencia (jpeg, png, jpg, gif). Example: foto.jpg
+     * @response 201 {
+     *  "status": true,
+     *  "message": "Detalle de solicitud creado exitosamente",
+     *  "data": {
+     *      "id": 5,
+     *      "solicitud_id": 1,
+     *      "mantenimiento_id": 2,
+     *      "cantidad_maquinas": 3,
+     *      "costo_total": 45000,
+     *      "Url_foto": "uploads/img5.jpg"
+     *  }
+     * }
      */
     public function store(Request $request)
     {
@@ -76,7 +80,7 @@ class DetalleSolicitudController extends Controller
                 'errors' => $validator->errors()
             ], 400);
         }
-        
+
         $subirImagenController = new SubirImagenController();
         $url_imagen = $subirImagenController->subirImagen($request);
 
@@ -99,24 +103,27 @@ class DetalleSolicitudController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/detalles-solicitud/{id}",
-     *     summary="Obtener un detalle de solicitud por ID",
-     *     tags={"DetalleSolicitud"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer"),
-     *         description="ID del detalle de solicitud"
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Detalle encontrado",
-     *         @OA\JsonContent(ref="#/components/schemas/DetalleSolicitud")
-     *     ),
-     *     @OA\Response(response=404, description="Detalle no encontrado")
-     * )
+     * Mostrar un detalle de solicitud
+     *
+     * Obtiene la información de un detalle de solicitud específico por su ID.
+     *
+     * @group DetalleSolicitud
+     * @urlParam id integer required ID del detalle de solicitud. Example: 3
+     * @response 200 {
+     *  "status": true,
+     *  "data": {
+     *      "id": 3,
+     *      "solicitud_id": 1,
+     *      "mantenimiento_id": 2,
+     *      "cantidad_maquinas": 2,
+     *      "costo_total": 30000,
+     *      "Url_foto": "uploads/img3.jpg"
+     *  }
+     * }
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Detalle de solicitud no encontrado"
+     * }
      */
     public function show($id)
     {
@@ -136,25 +143,27 @@ class DetalleSolicitudController extends Controller
     }
 
     /**
-     * @OA\Put(
-     *     path="/api/detalles-solicitud/{id}",
-     *     summary="Actualizar un detalle de solicitud",
-     *     tags={"DetalleSolicitud"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(
-     *             @OA\Property(property="cantidad_maquinas", type="integer", example=4),
-     *             @OA\Property(property="mantenimiento_id", type="integer", example=2)
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Detalle actualizado"),
-     *     @OA\Response(response=404, description="Detalle no encontrado")
-     * )
+     * Actualizar un detalle de solicitud
+     *
+     * Permite modificar los datos de un detalle de solicitud existente.
+     *
+     * @group DetalleSolicitud
+     * @urlParam id integer required ID del detalle a actualizar. Example: 3
+     * @bodyParam cantidad_maquinas integer Cantidad de máquinas. Example: 4
+     * @bodyParam mantenimiento_id integer ID del mantenimiento. Example: 2
+     * @response 200 {
+     *  "status": true,
+     *  "message": "Detalle de solicitud actualizado exitosamente",
+     *  "data": {
+     *      "id": 3,
+     *      "cantidad_maquinas": 4,
+     *      "costo_total": 60000
+     *  }
+     * }
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Detalle de solicitud no encontrado"
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -184,10 +193,10 @@ class DetalleSolicitudController extends Controller
         if ($request->has('cantidad_maquinas') || $request->has('mantenimiento_id')) {
             $mantenimiento_id = $request->mantenimiento_id ?? $detalle->mantenimiento_id;
             $cantidad = $request->cantidad_maquinas ?? $detalle->cantidad_maquinas;
-            
+
             $mantenimiento = Mantenimiento::find($mantenimiento_id);
             $costo_total = $mantenimiento->costo * $cantidad;
-            
+
             $request->merge(['costo_total' => $costo_total]);
         }
 
@@ -201,19 +210,18 @@ class DetalleSolicitudController extends Controller
     }
 
     /**
-     * @OA\Delete(
-     *     path="/api/detalles-solicitud/{id}",
-     *     summary="Eliminar un detalle de solicitud",
-     *     tags={"DetalleSolicitud"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Detalle eliminado"),
-     *     @OA\Response(response=404, description="Detalle no encontrado")
-     * )
+     * Eliminar un detalle de solicitud
+     *
+     * Elimina un detalle de solicitud y su imagen asociada.
+     *
+     * @group DetalleSolicitud
+     * @urlParam id integer required ID del detalle a eliminar. Example: 5
+     * @response 200 {
+     *  "message": "Registro eliminado correctamente"
+     * }
+     * @response 404 {
+     *  "error": "Registro no encontrado"
+     * }
      */
     public function destroy(string $id)
     {

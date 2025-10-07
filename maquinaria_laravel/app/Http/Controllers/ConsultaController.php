@@ -14,21 +14,27 @@ use App\Models\Mantenimiento;
 use App\Models\TipoMaquinaria;
 use App\Models\CategoriaMaquinaria;
 
-/**
- * @OA\Tag(
- *     name="Consultas",
- *     description="Consultas personalizadas sobre empleados, empresas, maquinaria y solicitudes"
- * )
- */
 class ConsultaController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/consultas/empleados-ordenados",
-     *     tags={"Consultas"},
-     *     summary="Listar empleados ordenados por apellido",
-     *     @OA\Response(response=200, description="Listado de empleados ordenado")
-     * )
+     * @group Consultas
+     * 
+     * Listar empleados ordenados por apellido
+     * 
+     * Devuelve una lista de todos los empleados ordenados alfabéticamente por el campo `apellido`.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "nombre": "Juan",
+     *       "apellido": "Arias",
+     *       "documento": "1057893210",
+     *       "email": "juan@empresa.com",
+     *       "telefono": "3100000000"
+     *     }
+     *   ]
+     * }
      */
     public function empleadosOrdenados()
     {
@@ -40,12 +46,24 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/consultas/maquinaria-costosa",
-     *     tags={"Consultas"},
-     *     summary="Listar maquinaria pesada con mantenimientos superiores a 1 millón",
-     *     @OA\Response(response=200, description="Maquinaria encontrada")
-     * )
+     * @group Consultas
+     * 
+     * Listar maquinaria pesada con mantenimientos superiores a 1 millón
+     * 
+     * Obtiene la maquinaria de tipo "Pesada" cuyos mantenimientos superen los $1,000,000.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "tipo_maquinaria": "Excavadora",
+     *       "categoria": "Pesada",
+     *       "codigo": "MNT001",
+     *       "mantenimiento": "Cambio de motor",
+     *       "costo": 1500000
+     *     }
+     *   ]
+     * }
      */
     public function maquinariaPesadaCostosa()
     {
@@ -66,12 +84,24 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/consultas/empresa-mas-solicitudes",
-     *     tags={"Consultas"},
-     *     summary="Obtener empresa con mayor número de solicitudes",
-     *     @OA\Response(response=200, description="Empresa con más solicitudes")
-     * )
+     * @group Consultas
+     * 
+     * Empresa con mayor número de solicitudes
+     * 
+     * Devuelve la empresa que ha realizado la mayor cantidad de solicitudes de mantenimiento.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *     "id": 1,
+     *     "nombre": "Constructora Andes",
+     *     "nit": "900123456-7",
+     *     "direccion": "Calle 10 #20-30",
+     *     "telefono": "3101234567",
+     *     "email": "contacto@andes.com",
+     *     "total_solicitudes": 8
+     *   }
+     * }
      */
     public function empresaMasSolicitudes()
     {
@@ -93,12 +123,19 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/consultas/maquinas-argos",
-     *     tags={"Consultas"},
-     *     summary="Total de máquinas con solicitud de mantenimiento de empresa Argos",
-     *     @OA\Response(response=200, description="Cantidad de máquinas de Argos")
-     * )
+     * @group Consultas
+     * 
+     * Total de máquinas con solicitud de mantenimiento de empresa Argos
+     * 
+     * Calcula la cantidad total de máquinas solicitadas por la empresa "Argos".
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *     "total_maquinas": 25,
+     *     "empresa": "Argos"
+     *   }
+     * }
      */
     public function maquinasArgos()
     {
@@ -114,12 +151,29 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/consultas/solicitudes-empleado",
-     *     tags={"Consultas"},
-     *     summary="Solicitudes que debe atender el empleado con documento 1057896547",
-     *     @OA\Response(response=200, description="Solicitudes asignadas")
-     * )
+     * @group Consultas
+     * 
+     * Solicitudes asignadas al empleado con documento 1057896547
+     * 
+     * Devuelve todas las solicitudes que debe atender un empleado específico.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "codigo": "SOL123",
+     *       "fecha_solicitud": "2023-10-10",
+     *       "empleados": [
+     *         {
+     *           "nombre": "Carlos",
+     *           "apellido": "Gomez",
+     *           "documento": "1057896547"
+     *         }
+     *       ]
+     *     }
+     *   ]
+     * }
      */
     public function solicitudesEmpleado()
     {
@@ -137,12 +191,22 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/consultas/representantes-sin-solicitudes",
-     *     tags={"Consultas"},
-     *     summary="Representantes y empresas sin solicitudes",
-     *     @OA\Response(response=200, description="Representantes encontrados")
-     * )
+     * @group Consultas
+     * 
+     * Representantes y empresas sin solicitudes
+     * 
+     * Muestra los representantes y las empresas que no han realizado solicitudes.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "nombre": "Pedro Martínez",
+     *       "empresa_nombre": "Maquinarias del Norte"
+     *     }
+     *   ]
+     * }
      */
     public function representantesEmpresasSinSolicitudes()
     {
@@ -156,12 +220,23 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/consultas/listado-solicitudes",
-     *     tags={"Consultas"},
-     *     summary="Listado de solicitudes con empresa, código, máquina y valor total",
-     *     @OA\Response(response=200, description="Listado obtenido")
-     * )
+     * @group Consultas
+     * 
+     * Listado de solicitudes con empresa, código, máquina y valor total
+     * 
+     * Devuelve un listado completo de solicitudes, con la empresa, código, cantidad de máquinas y costo total.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "empresa": "Constructora Sur",
+     *       "codigo_solicitud": "SOL456",
+     *       "cantidad_maquinas": 3,
+     *       "costo_total": 4500000
+     *     }
+     *   ]
+     * }
      */
     public function listadoSolicitudes()
     {
@@ -180,20 +255,37 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/consultas/solicitud-codigo",
-     *     tags={"Consultas"},
-     *     summary="Buscar solicitud por código y empleados asignados",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"codigo"},
-     *             @OA\Property(property="codigo", type="string", example="SOL123")
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Solicitud encontrada"),
-     *     @OA\Response(response=404, description="Solicitud no encontrada")
-     * )
+     * @group Consultas
+     * 
+     * Buscar solicitud por código y empleados asignados
+     * 
+     * Busca una solicitud por su código y devuelve información detallada incluyendo empleados y mantenimientos.
+     * 
+     * @bodyParam codigo string required Código de la solicitud. Example: SOL123
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *     "codigo": "SOL123",
+     *     "empresa": {
+     *       "nombre": "Constructora Andes",
+     *       "nit": "900123456-7"
+     *     },
+     *     "empleados": [
+     *       {
+     *         "nombre": "Carlos",
+     *         "apellido": "Gomez",
+     *         "documento": "1057896547",
+     *         "pivot": { "estado": "pendiente" }
+     *       }
+     *     ]
+     *   }
+     * }
+     * 
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Solicitud no encontrada"
+     * }
      */
     public function solicitudPorCodigo(Request $request)
     {
@@ -218,12 +310,19 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/consultas/mantenimientos-retroexcavadoras",
-     *     tags={"Consultas"},
-     *     summary="Cantidad de mantenimientos asignados a retroexcavadoras",
-     *     @OA\Response(response=200, description="Cantidad obtenida")
-     * )
+     * @group Consultas
+     * 
+     * Cantidad de mantenimientos asignados a retroexcavadoras
+     * 
+     * Devuelve la cantidad total de mantenimientos asociados a maquinaria tipo “retroexcavadora”.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *     "cantidad_mantenimientos": 12,
+     *     "tipo_maquinaria": "Retroexcavadoras"
+     *   }
+     * }
      */
     public function mantenimientosRetroexcavadoras()
     {
@@ -242,12 +341,24 @@ class ConsultaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/consultas/solicitudes-octubre-2023",
-     *     tags={"Consultas"},
-     *     summary="Listado de solicitudes de octubre 2023",
-     *     @OA\Response(response=200, description="Solicitudes encontradas")
-     * )
+     * @group Consultas
+     * 
+     * Listado de solicitudes de octubre 2023
+     * 
+     * Devuelve todas las solicitudes registradas en octubre de 2023 con su empresa y maquinaria relacionada.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "empresa": "Constructora Sur",
+     *       "maquinaria": "Excavadora",
+     *       "codigo": "MNT008",
+     *       "mantenimiento": "Cambio de filtros",
+     *       "cantidad_maquinas": 2
+     *     }
+     *   ]
+     * }
      */
     public function solicitudesOctubre2023()
     {

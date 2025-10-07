@@ -7,15 +7,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('api/documentation', function () {
-    return view('l5-swagger::index');
-});
-
-Route::get('/docs/openapi.json', function () {
-    $path = storage_path('api-docs/api-docs.json');
-    abort_unless(File::exists($path), 404, 'openapi.json no encontrado');
-    return response()->file($path, ['Content-Type' => 'application/json']);
-})->name('docs.openapi');
+// Las rutas de Swagger se registran automáticamente por el paquete L5-Swagger
+// No es necesario definirlas manualmente aquí
 
 
 

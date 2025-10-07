@@ -6,32 +6,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CategoriaMaquinaria;
 
-/**
- * @OA\Tag(
- *     name="Categorias",
- *     description="Operaciones relacionadas con las categorías de maquinaria"
- * )
- */
 class CategoriaMaquinariaController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/categorias",
-     *     tags={"Categorias"},
-     *     summary="Listar todas las categorías",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de categorías con sus tipos de maquinaria",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/CategoriaMaquinaria")
-     *             )
-     *         )
-     *     )
-     * )
+     * @group Categorías
+     * 
+     * Listar todas las categorías
+     * 
+     * Muestra todas las categorías de maquinaria con sus respectivos tipos de maquinaria.
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "nombre": "Excavadoras",
+     *       "descripcion": "Máquinas para excavación",
+     *       "tiposMaquinaria": [
+     *         {
+     *           "id": 1,
+     *           "nombre": "Excavadora hidráulica"
+     *         }
+     *       ]
+     *     }
+     *   ]
+     * }
      */
     public function index()
     {
@@ -44,28 +43,31 @@ class CategoriaMaquinariaController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/categorias",
-     *     tags={"Categorias"},
-     *     summary="Crear una nueva categoría",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"nombre"},
-     *             @OA\Property(property="nombre", type="string", example="Excavadoras"),
-     *             @OA\Property(property="descripcion", type="string", example="Máquinas para excavación")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Categoría creada exitosamente",
-     *         @OA\JsonContent(ref="#/components/schemas/CategoriaMaquinaria")
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Error de validación"
-     *     )
-     * )
+     * @group Categorías
+     * 
+     * Crear una nueva categoría
+     * 
+     * Crea una nueva categoría de maquinaria.
+     * 
+     * @bodyParam nombre string required Nombre de la categoría. Example: Excavadoras
+     * @bodyParam descripcion string Descripción de la categoría. Example: Máquinas para excavación
+     * 
+     * @response 201 {
+     *   "status": true,
+     *   "message": "Categoría creada exitosamente",
+     *   "data": {
+     *     "id": 3,
+     *     "nombre": "Excavadoras",
+     *     "descripcion": "Máquinas para excavación"
+     *   }
+     * }
+     * @response 422 {
+     *   "status": false,
+     *   "message": "Error de validación",
+     *   "errors": {
+     *     "nombre": ["El campo nombre es obligatorio."]
+     *   }
+     * }
      */
     public function store(Request $request)
     {
@@ -92,27 +94,27 @@ class CategoriaMaquinariaController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/categorias/{id}",
-     *     tags={"Categorias"},
-     *     summary="Obtener una categoría por ID",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la categoría",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Categoría encontrada",
-     *         @OA\JsonContent(ref="#/components/schemas/CategoriaMaquinaria")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Categoría no encontrada"
-     *     )
-     * )
+     * @group Categorías
+     * 
+     * Mostrar una categoría por ID
+     * 
+     * Retorna los datos de una categoría específica junto con sus tipos de maquinaria.
+     * 
+     * @urlParam id integer required ID de la categoría. Example: 1
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *     "id": 1,
+     *     "nombre": "Excavadoras",
+     *     "descripcion": "Máquinas para excavación",
+     *     "tiposMaquinaria": []
+     *   }
+     * }
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Categoría no encontrada"
+     * }
      */
     public function show($id)
     {
@@ -132,34 +134,29 @@ class CategoriaMaquinariaController extends Controller
     }
 
     /**
-     * @OA\Put(
-     *     path="/api/categorias/{id}",
-     *     tags={"Categorias"},
-     *     summary="Actualizar una categoría existente",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la categoría a actualizar",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="nombre", type="string", example="Grúas"),
-     *             @OA\Property(property="descripcion", type="string", example="Maquinaria de elevación")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Categoría actualizada exitosamente",
-     *         @OA\JsonContent(ref="#/components/schemas/CategoriaMaquinaria")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Categoría no encontrada"
-     *     )
-     * )
+     * @group Categorías
+     * 
+     * Actualizar una categoría
+     * 
+     * Permite actualizar el nombre o descripción de una categoría existente.
+     * 
+     * @urlParam id integer required ID de la categoría a actualizar. Example: 1
+     * @bodyParam nombre string Nombre de la categoría. Example: Grúas
+     * @bodyParam descripcion string Descripción de la categoría. Example: Maquinaria de elevación
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Categoría actualizada exitosamente",
+     *   "data": {
+     *     "id": 1,
+     *     "nombre": "Grúas",
+     *     "descripcion": "Maquinaria de elevación"
+     *   }
+     * }
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Categoría no encontrada"
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -195,26 +192,22 @@ class CategoriaMaquinariaController extends Controller
     }
 
     /**
-     * @OA\Delete(
-     *     path="/api/categorias/{id}",
-     *     tags={"Categorias"},
-     *     summary="Eliminar una categoría",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la categoría a eliminar",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Categoría eliminada exitosamente"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Categoría no encontrada"
-     *     )
-     * )
+     * @group Categorías
+     * 
+     * Eliminar una categoría
+     * 
+     * Elimina una categoría existente por su ID.
+     * 
+     * @urlParam id integer required ID de la categoría a eliminar. Example: 1
+     * 
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Categoría eliminada exitosamente"
+     * }
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Categoría no encontrada"
+     * }
      */
     public function destroy($id)
     {

@@ -40,6 +40,7 @@ class Empresa extends Model
         'direccion',
         'telefono',
         'email',
+        'ciudad',
     ];
 
     public function representantes()

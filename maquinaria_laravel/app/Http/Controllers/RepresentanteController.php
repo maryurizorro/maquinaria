@@ -8,16 +8,31 @@ use App\Models\Representante;
 
 class RepresentanteController extends Controller
 {
-        /**
-     * @OA\Get(
-     *     path="/api/representantes",
-     *     summary="Listar representantes",
-     *     tags={"Representantes"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de representantes con su empresa"
-     *     )
-     * )
+    /**
+     * @group Representantes
+     * 
+     * Listar todos los representantes
+     * 
+     * Devuelve una lista con todos los representantes y la información de su empresa asociada.
+     * 
+     * @response 200 {
+     *  "status": true,
+     *  "data": [
+     *      {
+     *          "id": 1,
+     *          "nombre": "Juan",
+     *          "apellido": "Pérez",
+     *          "documento": "12345678",
+     *          "telefono": "3001234567",
+     *          "email": "juan@example.com",
+     *          "empresa_id": 1,
+     *          "empresa": {
+     *              "id": 1,
+     *              "nombre": "Empresa ABC"
+     *          }
+     *      }
+     *  ]
+     * }
      */
     public function index()
     {
@@ -28,26 +43,45 @@ class RepresentanteController extends Controller
             'data' => $representantes
         ]);
     }
+
     /**
-     * @OA\Post(
-     *     path="/api/representantes",
-     *     summary="Crear un nuevo representante",
-     *     tags={"Representantes"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"nombre","apellido","documento","telefono","email","empresa_id"},
-     *             @OA\Property(property="nombre", type="string", example="Juan"),
-     *             @OA\Property(property="apellido", type="string", example="Pérez"),
-     *             @OA\Property(property="documento", type="string", example="12345678"),
-     *             @OA\Property(property="telefono", type="string", example="3001234567"),
-     *             @OA\Property(property="email", type="string", example="juan@example.com"),
-     *             @OA\Property(property="empresa_id", type="integer", example=1),
-     *         )
-     *     ),
-     *     @OA\Response(response=201, description="Representante creado exitosamente"),
-     *     @OA\Response(response=422, description="Error de validación")
-     * )
+     * @group Representantes
+     * 
+     * Crear un nuevo representante
+     * 
+     * Registra un nuevo representante y lo asocia a una empresa existente.
+     * 
+     * @bodyParam nombre string required Nombre del representante. Example: Juan
+     * @bodyParam apellido string required Apellido del representante. Example: Pérez
+     * @bodyParam documento string required Documento único del representante. Example: 12345678
+     * @bodyParam telefono string required Teléfono de contacto. Example: 3001234567
+     * @bodyParam email string required Correo electrónico único. Example: juan@example.com
+     * @bodyParam empresa_id integer required ID de la empresa asociada. Example: 1
+     * 
+     * @response 201 {
+     *  "status": true,
+     *  "message": "Representante creado exitosamente",
+     *  "data": {
+     *      "id": 1,
+     *      "nombre": "Juan",
+     *      "apellido": "Pérez",
+     *      "documento": "12345678",
+     *      "telefono": "3001234567",
+     *      "email": "juan@example.com",
+     *      "empresa": {
+     *          "id": 1,
+     *          "nombre": "Empresa ABC"
+     *      }
+     *  }
+     * }
+     * 
+     * @response 422 {
+     *  "status": false,
+     *  "message": "Error de validación",
+     *  "errors": {
+     *      "email": ["El campo email ya ha sido registrado."]
+     *  }
+     * }
      */
     public function store(Request $request)
     {
@@ -76,21 +110,36 @@ class RepresentanteController extends Controller
             'data' => $representante->load('empresa')
         ], 201);
     }
+
     /**
-     * @OA\Get(
-     *     path="/api/representantes/{id}",
-     *     summary="Obtener un representante",
-     *     tags={"Representantes"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         description="ID del representante",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Representante encontrado"),
-     *     @OA\Response(response=404, description="Representante no encontrado")
-     * )
+     * @group Representantes
+     * 
+     * Mostrar un representante por ID
+     * 
+     * Retorna los detalles de un representante y su empresa asociada.
+     * 
+     * @urlParam id integer required ID del representante. Example: 1
+     * 
+     * @response 200 {
+     *  "status": true,
+     *  "data": {
+     *      "id": 1,
+     *      "nombre": "Juan",
+     *      "apellido": "Pérez",
+     *      "documento": "12345678",
+     *      "telefono": "3001234567",
+     *      "email": "juan@example.com",
+     *      "empresa": {
+     *          "id": 1,
+     *          "nombre": "Empresa ABC"
+     *      }
+     *  }
+     * }
+     * 
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Representante no encontrado"
+     * }
      */
     public function show($id)
     {
@@ -110,31 +159,39 @@ class RepresentanteController extends Controller
     }
 
     /**
-     * @OA\Put(
-     *     path="/api/representantes/{id}",
-     *     summary="Actualizar un representante",
-     *     tags={"Representantes"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         description="ID del representante",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=false,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="nombre", type="string", example="Carlos"),
-     *             @OA\Property(property="apellido", type="string", example="Ramírez"),
-     *             @OA\Property(property="documento", type="string", example="98765432"),
-     *             @OA\Property(property="telefono", type="string", example="3209876543"),
-     *             @OA\Property(property="email", type="string", example="carlos@example.com"),
-     *             @OA\Property(property="empresa_id", type="integer", example=2),
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Representante actualizado exitosamente"),
-     *     @OA\Response(response=404, description="Representante no encontrado")
-     * )
+     * @group Representantes
+     * 
+     * Actualizar un representante existente
+     * 
+     * Permite modificar los datos de un representante existente.
+     * 
+     * @urlParam id integer required ID del representante a actualizar. Example: 1
+     * @bodyParam nombre string Nombre del representante. Example: Carlos
+     * @bodyParam apellido string Apellido del representante. Example: Ramírez
+     * @bodyParam documento string Documento del representante. Example: 98765432
+     * @bodyParam telefono string Teléfono de contacto. Example: 3209876543
+     * @bodyParam email string Correo electrónico. Example: carlos@example.com
+     * @bodyParam empresa_id integer ID de la empresa asociada. Example: 2
+     * 
+     * @response 200 {
+     *  "status": true,
+     *  "message": "Representante actualizado exitosamente",
+     *  "data": {
+     *      "id": 1,
+     *      "nombre": "Carlos",
+     *      "apellido": "Ramírez",
+     *      "email": "carlos@example.com",
+     *      "empresa": {
+     *          "id": 2,
+     *          "nombre": "Empresa XYZ"
+     *      }
+     *  }
+     * }
+     * 
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Representante no encontrado"
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -172,21 +229,25 @@ class RepresentanteController extends Controller
             'data' => $representante->load('empresa')
         ]);
     }
+
     /**
-     * @OA\Delete(
-     *     path="/api/representantes/{id}",
-     *     summary="Eliminar un representante",
-     *     tags={"Representantes"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         description="ID del representante",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Representante eliminado exitosamente"),
-     *     @OA\Response(response=404, description="Representante no encontrado")
-     * )
+     * @group Representantes
+     * 
+     * Eliminar un representante
+     * 
+     * Elimina un representante existente según su ID.
+     * 
+     * @urlParam id integer required ID del representante a eliminar. Example: 1
+     * 
+     * @response 200 {
+     *  "status": true,
+     *  "message": "Representante eliminado exitosamente"
+     * }
+     * 
+     * @response 404 {
+     *  "status": false,
+     *  "message": "Representante no encontrado"
+     * }
      */
     public function destroy($id)
     {

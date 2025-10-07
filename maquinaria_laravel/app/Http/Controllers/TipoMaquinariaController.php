@@ -8,20 +8,25 @@ use App\Models\TipoMaquinaria;
 
 class TipoMaquinariaController extends Controller
 {
-        /**
-     * @OA\Get(
-     *     path="/api/tipos-maquinaria",
-     *     summary="Listar todos los tipos de maquinaria",
-     *     tags={"Tipos de Maquinaria"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de tipos de maquinaria",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/TipoMaquinaria"))
-     *         )
-     *     )
-     * )
+       /**
+     * Listar todos los tipos de maquinaria.
+     *
+     * @group Tipos de Maquinaria
+     *
+     * Este endpoint devuelve la lista completa de tipos de maquinaria registrados, junto con su categoría y mantenimientos relacionados.
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "nombre": "Excavadora",
+     *       "descripcion": "Maquinaria usada para excavación",
+     *       "categoria": {"id": 1, "nombre": "Pesada"},
+     *       "mantenimientos": []
+     *     }
+     *   ]
+     * }
      */
     public function index()
     {
@@ -32,30 +37,36 @@ class TipoMaquinariaController extends Controller
             'data' => $tipos
         ]);
     }
-    /**
-     * @OA\Post(
-     *     path="/api/tipos-maquinaria",
-     *     summary="Crear un nuevo tipo de maquinaria",
-     *     tags={"Tipos de Maquinaria"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"nombre","categoria_id"},
-     *             @OA\Property(property="nombre", type="string", example="Excavadora"),
-     *             @OA\Property(property="descripcion", type="string", example="Maquinaria pesada usada para excavación"),
-     *             @OA\Property(property="categoria_id", type="integer", example=1)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Tipo de maquinaria creado exitosamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Tipo de maquinaria creado exitosamente"),
-     *             @OA\Property(property="data", ref="#/components/schemas/TipoMaquinaria")
-     *         )
-     *     )
-     * )
+ /**
+     * Crear un nuevo tipo de maquinaria.
+     *
+     * @group Tipos de Maquinaria
+     *
+     * Crea un nuevo tipo de maquinaria dentro de una categoría existente.
+     *
+     * @bodyParam nombre string required Nombre del tipo de maquinaria. Ejemplo: Excavadora.
+     * @bodyParam descripcion string Descripción opcional. Ejemplo: Maquinaria pesada usada para excavación.
+     * @bodyParam categoria_id integer required ID de la categoría a la que pertenece. Ejemplo: 1.
+     *
+     * @response 201 {
+     *   "status": true,
+     *   "message": "Tipo de maquinaria creado exitosamente",
+     *   "data": {
+     *     "id": 5,
+     *     "nombre": "Excavadora",
+     *     "descripcion": "Maquinaria pesada usada para excavación",
+     *     "categoria_id": 1
+     *   }
+     * }
+     *
+     * @response 422 {
+     *   "status": false,
+     *   "message": "Error de validación",
+     *   "errors": {
+     *     "nombre": ["El campo nombre es obligatorio."],
+     *     "categoria_id": ["El campo categoria_id es obligatorio."]
+     *   }
+     * }
      */
     public function store(Request $request)
     {
@@ -81,31 +92,30 @@ class TipoMaquinariaController extends Controller
             'data' => $tipo->load('categoria')
         ], 201);
     }
- /**
-     * @OA\Get(
-     *     path="/api/tipos-maquinaria/{id}",
-     *     summary="Obtener un tipo de maquinaria por ID",
-     *     tags={"Tipos de Maquinaria"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del tipo de maquinaria",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Tipo de maquinaria encontrado",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="data", ref="#/components/schemas/TipoMaquinaria")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Tipo de maquinaria no encontrado"
-     *     )
-     * )
+/**
+     * Obtener un tipo de maquinaria por ID.
+     *
+     * @group Tipos de Maquinaria
+     *
+     * Muestra los detalles de un tipo de maquinaria específico.
+     *
+     * @urlParam id integer required ID del tipo de maquinaria. Ejemplo: 1.
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "data": {
+     *     "id": 1,
+     *     "nombre": "Excavadora",
+     *     "descripcion": "Equipo de excavación",
+     *     "categoria": {"id": 1, "nombre": "Pesada"},
+     *     "mantenimientos": []
+     *   }
+     * }
+     *
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Tipo de maquinaria no encontrado"
+     * }
      */
     public function show($id)
     {
@@ -123,36 +133,34 @@ class TipoMaquinariaController extends Controller
             'data' => $tipo
         ]);
     }
- /**
-     * @OA\Put(
-     *     path="/api/tipos-maquinaria/{id}",
-     *     summary="Actualizar un tipo de maquinaria",
-     *     tags={"Tipos de Maquinaria"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del tipo de maquinaria",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="nombre", type="string", example="Retroexcavadora"),
-     *             @OA\Property(property="descripcion", type="string", example="Equipo usado para remover tierra"),
-     *             @OA\Property(property="categoria_id", type="integer", example=2)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Tipo de maquinaria actualizado exitosamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Tipo de maquinaria actualizado exitosamente"),
-     *             @OA\Property(property="data", ref="#/components/schemas/TipoMaquinaria")
-     *         )
-     *     )
-     * )
+
+    /**
+     * Actualizar un tipo de maquinaria.
+     *
+     * @group Tipos de Maquinaria
+     *
+     * Permite modificar la información de un tipo de maquinaria existente.
+     *
+     * @urlParam id integer required ID del tipo de maquinaria a actualizar. Ejemplo: 2.
+     * @bodyParam nombre string Nombre del tipo de maquinaria. Ejemplo: Retroexcavadora.
+     * @bodyParam descripcion string Descripción del tipo de maquinaria. Ejemplo: Equipo para remover tierra.
+     * @bodyParam categoria_id integer ID de la categoría. Ejemplo: 2.
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Tipo de maquinaria actualizado exitosamente",
+     *   "data": {
+     *     "id": 2,
+     *     "nombre": "Retroexcavadora",
+     *     "descripcion": "Equipo para remover tierra",
+     *     "categoria_id": 2
+     *   }
+     * }
+     *
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Tipo de maquinaria no encontrado"
+     * }
      */
     public function update(Request $request, $id)
     {
@@ -188,30 +196,23 @@ class TipoMaquinariaController extends Controller
         ]);
     }
 /**
-     * @OA\Delete(
-     *     path="/api/tipos-maquinaria/{id}",
-     *     summary="Eliminar un tipo de maquinaria",
-     *     tags={"Tipos de Maquinaria"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del tipo de maquinaria",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Tipo de maquinaria eliminado exitosamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Tipo de maquinaria eliminado exitosamente")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Tipo de maquinaria no encontrado"
-     *     )
-     * )
+     * Eliminar un tipo de maquinaria.
+     *
+     * @group Tipos de Maquinaria
+     *
+     * Elimina un tipo de maquinaria específico del sistema.
+     *
+     * @urlParam id integer required ID del tipo de maquinaria a eliminar. Ejemplo: 3.
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Tipo de maquinaria eliminado exitosamente"
+     * }
+     *
+     * @response 404 {
+     *   "status": false,
+     *   "message": "Tipo de maquinaria no encontrado"
+     * }
      */
     public function destroy($id)
     {

@@ -1,0 +1,582 @@
+name: Consultas
+description: ''
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/empleado_ordenados
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Listar empleados ordenados por apellido
+
+        Devuelve una lista de todos los empleados ordenados alfabéticamente por el campo `apellido`.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": [
+              {
+                "nombre": "Juan",
+                "apellido": "Arias",
+                "documento": "1057893210",
+                "email": "juan@empresa.com",
+                "telefono": "3100000000"
+              }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/maquinaria_pesada_costosa
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Listar maquinaria pesada con mantenimientos superiores a 1 millón
+
+        Obtiene la maquinaria de tipo "Pesada" cuyos mantenimientos superen los $1,000,000.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": [
+              {
+                "tipo_maquinaria": "Excavadora",
+                "categoria": "Pesada",
+                "codigo": "MNT001",
+                "mantenimiento": "Cambio de motor",
+                "costo": 1500000
+              }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/empresa_mas_solicitudes
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Empresa con mayor número de solicitudes
+
+        Devuelve la empresa que ha realizado la mayor cantidad de solicitudes de mantenimiento.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": {
+              "id": 1,
+              "nombre": "Constructora Andes",
+              "nit": "900123456-7",
+              "direccion": "Calle 10 #20-30",
+              "telefono": "3101234567",
+              "email": "contacto@andes.com",
+              "total_solicitudes": 8
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/maquinas_argos
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Total de máquinas con solicitud de mantenimiento de empresa Argos
+
+        Calcula la cantidad total de máquinas solicitadas por la empresa "Argos".
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": {
+              "total_maquinas": 25,
+              "empresa": "Argos"
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/solicitudes_empleado
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Solicitudes asignadas al empleado con documento 1057896547
+
+        Devuelve todas las solicitudes que debe atender un empleado específico.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": [
+              {
+                "id": 1,
+                "codigo": "SOL123",
+                "fecha_solicitud": "2023-10-10",
+                "empleados": [
+                  {
+                    "nombre": "Carlos",
+                    "apellido": "Gomez",
+                    "documento": "1057896547"
+                  }
+                ]
+              }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/representantes_sin_solicitudes
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Representantes y empresas sin solicitudes
+
+        Muestra los representantes y las empresas que no han realizado solicitudes.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": [
+              {
+                "id": 1,
+                "nombre": "Pedro Martínez",
+                "empresa_nombre": "Maquinarias del Norte"
+              }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/listado_solicitudes
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Listado de solicitudes con empresa, código, máquina y valor total
+
+        Devuelve un listado completo de solicitudes, con la empresa, código, cantidad de máquinas y costo total.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": [
+              {
+                "empresa": "Constructora Sur",
+                "codigo_solicitud": "SOL456",
+                "cantidad_maquinas": 3,
+                "costo_total": 4500000
+              }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/consultas/solicitud_por_codigo
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Buscar solicitud por código y empleados asignados
+
+        Busca una solicitud por su código y devuelve información detallada incluyendo empleados y mantenimientos.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      codigo:
+        name: codigo
+        description: 'Código de la solicitud.'
+        required: true
+        example: SOL123
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      codigo: SOL123
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": {
+              "codigo": "SOL123",
+              "empresa": {
+                "nombre": "Constructora Andes",
+                "nit": "900123456-7"
+              },
+              "empleados": [
+                {
+                  "nombre": "Carlos",
+                  "apellido": "Gomez",
+                  "documento": "1057896547",
+                  "pivot": { "estado": "pendiente" }
+                }
+              ]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "status": false,
+            "message": "Solicitud no encontrada"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/mantenimientos_retroexcavadoras
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Cantidad de mantenimientos asignados a retroexcavadoras
+
+        Devuelve la cantidad total de mantenimientos asociados a maquinaria tipo “retroexcavadora”.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": {
+              "cantidad_mantenimientos": 12,
+              "tipo_maquinaria": "Retroexcavadoras"
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/consultas/solicitudes_octubre_2023
+    metadata:
+      groupName: Consultas
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: |-
+        Listado de solicitudes de octubre 2023
+
+        Devuelve todas las solicitudes registradas en octubre de 2023 con su empresa y maquinaria relacionada.
+      description: ''
+      authenticated: true
+      deprecated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "status": true,
+            "data": [
+              {
+                "empresa": "Constructora Sur",
+                "maquinaria": "Excavadora",
+                "codigo": "MNT008",
+                "mantenimiento": "Cambio de filtros",
+                "cantidad_maquinas": 2
+              }
+            ]
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {YOUR_TOKEN}'
+    controller: null
+    method: null
+    route: null
+    custom: []
